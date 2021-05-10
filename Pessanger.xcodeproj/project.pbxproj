@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C8134882649608A0028454F /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8134872649608A0028454F /* LocationService.swift */; };
+		1CB0A0CD2649265A0062C22D /* DaumMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0A0CC2649265A0062C22D /* DaumMap.framework */; };
+		1CB0A0CF264926810062C22D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED2264923380062C22D /* QuartzCore.framework */; };
+		1CB0A0D0264926890062C22D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */; };
+		1CB0A0D2264926900062C22D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0A0D1264926900062C22D /* Metal.framework */; };
+		1CB0A0D32649269F0062C22D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED62649234D0062C22D /* libsqlite3.tbd */; };
+		1CB0A0D4264926A70062C22D /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED5264923470062C22D /* libxml2.tbd */; };
+		1CB0A0D5264926AF0062C22D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED4264923400062C22D /* libc++.tbd */; };
+		1CB0A0D6264927B10062C22D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED0264923320062C22D /* CoreLocation.framework */; };
+		1CB0A0DA26492A130062C22D /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB0A0D926492A130062C22D /* APIService.swift */; };
 		1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B426490B97009A923B /* AppDelegate.swift */; };
 		1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B626490B97009A923B /* SceneDelegate.swift */; };
 		1CDBE4BC26490B97009A923B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CDBE4BA26490B97009A923B /* Main.storyboard */; };
@@ -19,6 +29,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C8134872649608A0028454F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1CB09ED0264923320062C22D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		1CB09ED2264923380062C22D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1CB09ED4264923400062C22D /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		1CB09ED5264923470062C22D /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		1CB09ED62649234D0062C22D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		1CB0A0C9264923C90062C22D /* KakaoMap-Bridgeheader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KakaoMap-Bridgeheader.h"; sourceTree = "<group>"; };
+		1CB0A0CC2649265A0062C22D /* DaumMap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DaumMap.framework; path = ../../../Downloads/IOS_DaumMap_SDK_1.4.0/lib/DaumMap.embeddedframework/DaumMap.framework; sourceTree = "<group>"; };
+		1CB0A0D1264926900062C22D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		1CB0A0D926492A130062C22D /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		1CDBE4B126490B97009A923B /* Pessanger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pessanger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDBE4B426490B97009A923B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CDBE4B626490B97009A923B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -36,7 +57,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CB0A0CF264926810062C22D /* QuartzCore.framework in Frameworks */,
+				1CB0A0D0264926890062C22D /* SystemConfiguration.framework in Frameworks */,
+				1CB0A0D32649269F0062C22D /* libsqlite3.tbd in Frameworks */,
 				1CDBE4D026490D2B009A923B /* SnapKit in Frameworks */,
+				1CB0A0CD2649265A0062C22D /* DaumMap.framework in Frameworks */,
+				1CB0A0D4264926A70062C22D /* libxml2.tbd in Frameworks */,
+				1CB0A0D6264927B10062C22D /* CoreLocation.framework in Frameworks */,
+				1CB0A0D5264926AF0062C22D /* libc++.tbd in Frameworks */,
+				1CB0A0D2264926900062C22D /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,11 +92,43 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		1CB09ECB264923230062C22D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1CB0A0D1264926900062C22D /* Metal.framework */,
+				1CB09ED62649234D0062C22D /* libsqlite3.tbd */,
+				1CB09ED5264923470062C22D /* libxml2.tbd */,
+				1CB09ED4264923400062C22D /* libc++.tbd */,
+				1CB09ED2264923380062C22D /* QuartzCore.framework */,
+				1CB09ED0264923320062C22D /* CoreLocation.framework */,
+				1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1CB0A0C8264923880062C22D /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				1CB0A0C9264923C90062C22D /* KakaoMap-Bridgeheader.h */,
+			);
+			path = Header;
+			sourceTree = "<group>";
+		};
+		1CB0A0D826492A040062C22D /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				1CB0A0D926492A130062C22D /* APIService.swift */,
+				1C8134872649608A0028454F /* LocationService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		1CDBE4A826490B97009A923B = {
 			isa = PBXGroup;
 			children = (
 				1CDBE4B326490B97009A923B /* Pessanger */,
 				1CDBE4B226490B97009A923B /* Products */,
+				1CB09ECB264923230062C22D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +143,9 @@
 		1CDBE4B326490B97009A923B /* Pessanger */ = {
 			isa = PBXGroup;
 			children = (
+				1CB0A0D826492A040062C22D /* Service */,
+				1CB0A0CC2649265A0062C22D /* DaumMap.framework */,
+				1CB0A0C8264923880062C22D /* Header */,
 				1CDBE4B426490B97009A923B /* AppDelegate.swift */,
 				1CDBE4B626490B97009A923B /* SceneDelegate.swift */,
 				1CB09E1C2649148A0062C22D /* Resources */,
@@ -167,10 +231,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C8134882649608A0028454F /* LocationService.swift in Sources */,
 				1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */,
 				1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */,
 				1CDBE4CB26490BD6009A923B /* ChatViewController.swift in Sources */,
 				1CDBE4CD26490BE4009A923B /* MessageViewController.swift in Sources */,
+				1CB0A0DA26492A130062C22D /* APIService.swift in Sources */,
 				1CDBE4C926490BCD009A923B /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,8 +384,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5LZNHGFB8C;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pessanger",
+				);
 				INFOPLIST_FILE = Pessanger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -327,6 +398,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/keen/Practice/Pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -337,8 +409,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5LZNHGFB8C;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pessanger",
+				);
 				INFOPLIST_FILE = Pessanger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -346,6 +423,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/keen/Practice/Pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
