@@ -43,6 +43,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1CB09E1B2649147F0062C22D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1CDBE4CA26490BD6009A923B /* ChatViewController.swift */,
+				1CDBE4CC26490BE4009A923B /* MessageViewController.swift */,
+				1CDBE4C826490BCD009A923B /* HomeViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1CB09E1C2649148A0062C22D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1CDBE4BA26490B97009A923B /* Main.storyboard */,
+				1CDBE4BD26490B98009A923B /* Assets.xcassets */,
+				1CDBE4BF26490B98009A923B /* LaunchScreen.storyboard */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		1CDBE4A826490B97009A923B = {
 			isa = PBXGroup;
 			children = (
@@ -64,12 +84,8 @@
 			children = (
 				1CDBE4B426490B97009A923B /* AppDelegate.swift */,
 				1CDBE4B626490B97009A923B /* SceneDelegate.swift */,
-				1CDBE4CA26490BD6009A923B /* ChatViewController.swift */,
-				1CDBE4CC26490BE4009A923B /* MessageViewController.swift */,
-				1CDBE4C826490BCD009A923B /* HomeViewController.swift */,
-				1CDBE4BA26490B97009A923B /* Main.storyboard */,
-				1CDBE4BD26490B98009A923B /* Assets.xcassets */,
-				1CDBE4BF26490B98009A923B /* LaunchScreen.storyboard */,
+				1CB09E1C2649148A0062C22D /* Resources */,
+				1CB09E1B2649147F0062C22D /* Views */,
 				1CDBE4C226490B98009A923B /* Info.plist */,
 			);
 			path = Pessanger;
