@@ -23,6 +23,8 @@ class HomeViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    setSearchBar()
+    
     requestAuthorization()
 
     // 지도 불러오기
@@ -50,8 +52,41 @@ class HomeViewController: UIViewController {
       self.view.addSubview(mapView)
     }
   }
+  
+  // MARK: setting searchBar
+  func setSearchBar() {
+    let searchBar = UISearchBar()
+    searchBar.setImage(UIImage(named: "ic_search"), for: UISearchBar.Icon.search, state: .normal)
+    self.navigationController?.navigationBar.topItem?.titleView = searchBar
+    
+    searchBar.setImage(UIImage(named: "ic_clear"), for: .clear, state: .normal)
+    searchBar.placeholder = "이름을 검색하세요."
+    searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+    
+    searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
+    searchBar.layer.shadowOpacity = 0.25
+    searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
+    searchBar.layer.shadowRadius = 5
+    
+    if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
+      textfield.backgroundColor = UIColor.white
+      textfield.layer.cornerRadius = 17
+      textfield.clipsToBounds = true
+      
+      if let leftView = textfield.leftView as? UIImageView {
+        leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
+        leftView.tintColor = UIColor.black
+      }
+      
+      if let rightView = textfield.rightView as? UIImageView {
+        rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
+        rightView.tintColor = UIColor.black
+      }
+    }
+  }
 }
 
+// MARK: extensions
 extension HomeViewController: MTMapViewDelegate {
   // Custom: 현 위치 트래킹 함수
   func mapView(_ mapView: MTMapView!, updateCurrentLocation location: MTMapPoint!, withAccuracy accuracy: MTMapLocationAccuracy) {
