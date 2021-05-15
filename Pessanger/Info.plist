@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>KAKAO_APP_KEY</key>
-	<string></string>
+	<string>1e1622dd1c38c4b8667b45d4356f8c45</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -62,5 +62,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>LSApplicationCategoryType</key>
+	<string>
+1e1622dd1c38c4b8667b45d4356f8c45</string>
 </dict>
 </plist>

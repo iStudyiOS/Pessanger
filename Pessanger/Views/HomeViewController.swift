@@ -11,10 +11,12 @@ import CoreLocation
 
 public let DEFAULT_POSITION = MTMapPointGeo(latitude: 37.566508, longitude: 126.977945)
 
-class HomeViewController: UIViewController, MTMapViewDelegate {
+class HomeViewController: UIViewController {
+  // MARK: UI - Button
+  var chatButton = UIButton()
+  var profileButton = UIButton()
   
   var mapView: MTMapView?
-
   var mapPoint1: MTMapPoint?
   var poiItem1: MTMapPOIItem?
   
@@ -23,18 +25,9 @@ class HomeViewController: UIViewController, MTMapViewDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-
+    // MARK: Setting MapView
     requestAuthorization()
-    // 위치 업데이트
-//    locationManager.startUpdatingLocation()
-     // 위,경도 가져오기
-//    guard let coor = locationManager.location?.coordinate else {
-//      print("현재 위치 가져오기 실패.")
-//      return
-//    }
 
-    
     // 지도 불러오기
     mapView = MTMapView(frame: self.view.bounds)
     
@@ -58,9 +51,98 @@ class HomeViewController: UIViewController, MTMapViewDelegate {
       mapView.add(poiItem1)
                           
       self.view.addSubview(mapView)
+      self.view.addSubview(chatButton)
+      self.view.addSubview(profileButton)
+
+      // MARK: Constraints
+      chatButton.snp.makeConstraints { make in
+        make.bottom.equalTo(-20)
+        make.size.equalTo(CGSize(width: 70, height: 70))
+        make.left.equalTo(20)
+      }
+      profileButton.snp.makeConstraints { make in
+        make.bottom.equalTo(-20)
+        make.size.equalTo(CGSize(width: 70, height: 70))
+        make.right.equalTo(-20)
+      }
+      // configure
+      setSearchBar()
+      setChatButton()
+      setProfileButton()
     }
   }
+  // MARK: Setting Button
+  func setChatButton() {
+    chatButton.backgroundColor = .white
+    chatButton.layer.cornerRadius = 70 * 0.5
+    chatButton.clipsToBounds = true
+    chatButton.setImage(UIImage(named: "ic_chat"), for: .normal)
+    chatButton.imageEdgeInsets = UIEdgeInsets(top: 13, left: 12, bottom: 13, right: 12)
+    makeShadow(chatButton)
+    chatButton.addTarget(self, action: #selector(chatButtonAction), for: .touchUpInside)
+  }
+  func setProfileButton() {
+    profileButton.backgroundColor = .white
+    profileButton.layer.cornerRadius = 70 * 0.5
+    profileButton.clipsToBounds = true
+    profileButton.setImage(UIImage(named: "ic_profile"), for: .normal)
+    profileButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    makeShadow(profileButton)
+    profileButton.addTarget(self, action: #selector(profileButtonAction), for: .touchUpInside)
+  }
+  
+  func makeShadow(_ item: UIButton) {
+    item.layer.masksToBounds = false
+    item.layer.shadowColor = UIColor.gray.cgColor
+    item.layer.shadowOpacity = 0.5
+    item.layer.shadowOffset = CGSize.zero
+    item.layer.shadowRadius = 5
+  }
+  
+  // MARK: Setting searchBar
+  func setSearchBar() {
+    let searchBar = UISearchBar()
+    searchBar.setImage(UIImage(named: "ic_search"), for: UISearchBar.Icon.search, state: .normal)
+    self.navigationController?.navigationBar.topItem?.titleView = searchBar
     
+    searchBar.setImage(UIImage(named: "ic_clear"), for: .clear, state: .normal)
+    searchBar.placeholder = "이름을 검색하세요."
+    searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+    
+    searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
+    searchBar.layer.shadowOpacity = 0.25
+    searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
+    searchBar.layer.shadowRadius = 5
+    
+    if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
+      textfield.backgroundColor = UIColor.white
+      textfield.layer.cornerRadius = 17
+      textfield.clipsToBounds = true
+      
+      if let leftView = textfield.leftView as? UIImageView {
+        leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
+        leftView.tintColor = UIColor.black
+      }
+      
+      if let rightView = textfield.rightView as? UIImageView {
+        rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
+        rightView.tintColor = UIColor.black
+      }
+    }
+  }
+  
+  // MARK: Button Action
+  @objc func chatButtonAction(_ sender: UIButton!) {
+    print("chat button pressed.")
+  }
+  
+  @objc func profileButtonAction(_ sender: UIButton!) {
+    print("profile button pressed.")
+  }
+}
+
+// MARK: extensions
+extension HomeViewController: MTMapViewDelegate {
   // Custom: 현 위치 트래킹 함수
   func mapView(_ mapView: MTMapView!, updateCurrentLocation location: MTMapPoint!, withAccuracy accuracy: MTMapLocationAccuracy) {
     let currentLocation = location?.mapPointGeo()
