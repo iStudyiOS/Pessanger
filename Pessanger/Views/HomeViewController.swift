@@ -79,6 +79,7 @@ class HomeViewController: UIViewController {
     chatButton.setImage(UIImage(named: "ic_chat"), for: .normal)
     chatButton.imageEdgeInsets = UIEdgeInsets(top: 13, left: 12, bottom: 13, right: 12)
     makeShadow(chatButton)
+    chatButton.addTarget(self, action: #selector(chatButtonAction), for: .touchUpInside)
   }
   func setProfileButton() {
     profileButton.backgroundColor = .white
@@ -87,6 +88,7 @@ class HomeViewController: UIViewController {
     profileButton.setImage(UIImage(named: "ic_profile"), for: .normal)
     profileButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     makeShadow(profileButton)
+    profileButton.addTarget(self, action: #selector(profileButtonAction), for: .touchUpInside)
   }
   
   func makeShadow(_ item: UIButton) {
@@ -127,6 +129,15 @@ class HomeViewController: UIViewController {
         rightView.tintColor = UIColor.black
       }
     }
+  }
+  
+  // MARK: Button Action
+  @objc func chatButtonAction(_ sender: UIButton!) {
+    print("chat button pressed.")
+  }
+  
+  @objc func profileButtonAction(_ sender: UIButton!) {
+    print("profile button pressed.")
   }
 }
 
