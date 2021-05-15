@@ -12,6 +12,9 @@ import CoreLocation
 public let DEFAULT_POSITION = MTMapPointGeo(latitude: 37.566508, longitude: 126.977945)
 
 class HomeViewController: UIViewController {
+  // MARK: UI - Button
+  var chatButton = UIButton()
+  var profileButton = UIButton()
   
   var mapView: MTMapView?
   var mapPoint1: MTMapPoint?
@@ -22,9 +25,7 @@ class HomeViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    setSearchBar()
-    
+    // MARK: Setting MapView
     requestAuthorization()
 
     // 지도 불러오기
@@ -50,10 +51,53 @@ class HomeViewController: UIViewController {
       mapView.add(poiItem1)
                           
       self.view.addSubview(mapView)
+      self.view.addSubview(chatButton)
+      self.view.addSubview(profileButton)
+
+      // MARK: Constraints
+      chatButton.snp.makeConstraints { make in
+        make.bottom.equalTo(-20)
+        make.size.equalTo(CGSize(width: 70, height: 70))
+        make.left.equalTo(20)
+      }
+      profileButton.snp.makeConstraints { make in
+        make.bottom.equalTo(-20)
+        make.size.equalTo(CGSize(width: 70, height: 70))
+        make.right.equalTo(-20)
+      }
+      // configure
+      setSearchBar()
+      setChatButton()
+      setProfileButton()
     }
   }
+  // MARK: Setting Button
+  func setChatButton() {
+    chatButton.backgroundColor = .white
+    chatButton.layer.cornerRadius = 70 * 0.5
+    chatButton.clipsToBounds = true
+    chatButton.setImage(UIImage(named: "ic_chat"), for: .normal)
+    chatButton.imageEdgeInsets = UIEdgeInsets(top: 13, left: 12, bottom: 13, right: 12)
+    makeShadow(chatButton)
+  }
+  func setProfileButton() {
+    profileButton.backgroundColor = .white
+    profileButton.layer.cornerRadius = 70 * 0.5
+    profileButton.clipsToBounds = true
+    profileButton.setImage(UIImage(named: "ic_profile"), for: .normal)
+    profileButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    makeShadow(profileButton)
+  }
   
-  // MARK: setting searchBar
+  func makeShadow(_ item: UIButton) {
+    item.layer.masksToBounds = false
+    item.layer.shadowColor = UIColor.gray.cgColor
+    item.layer.shadowOpacity = 0.5
+    item.layer.shadowOffset = CGSize.zero
+    item.layer.shadowRadius = 5
+  }
+  
+  // MARK: Setting searchBar
   func setSearchBar() {
     let searchBar = UISearchBar()
     searchBar.setImage(UIImage(named: "ic_search"), for: UISearchBar.Icon.search, state: .normal)
