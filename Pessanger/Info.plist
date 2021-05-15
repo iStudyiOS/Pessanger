@@ -62,5 +62,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>LSApplicationCategoryType</key>
+	<string>
+1e1622dd1c38c4b8667b45d4356f8c45</string>
 </dict>
 </plist>

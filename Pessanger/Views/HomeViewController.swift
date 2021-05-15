@@ -11,10 +11,9 @@ import CoreLocation
 
 public let DEFAULT_POSITION = MTMapPointGeo(latitude: 37.566508, longitude: 126.977945)
 
-class HomeViewController: UIViewController, MTMapViewDelegate {
+class HomeViewController: UIViewController {
   
   var mapView: MTMapView?
-
   var mapPoint1: MTMapPoint?
   var poiItem1: MTMapPOIItem?
   
@@ -24,17 +23,8 @@ class HomeViewController: UIViewController, MTMapViewDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-
     requestAuthorization()
-    // 위치 업데이트
-//    locationManager.startUpdatingLocation()
-     // 위,경도 가져오기
-//    guard let coor = locationManager.location?.coordinate else {
-//      print("현재 위치 가져오기 실패.")
-//      return
-//    }
 
-    
     // 지도 불러오기
     mapView = MTMapView(frame: self.view.bounds)
     
@@ -60,7 +50,9 @@ class HomeViewController: UIViewController, MTMapViewDelegate {
       self.view.addSubview(mapView)
     }
   }
-    
+}
+
+extension HomeViewController: MTMapViewDelegate {
   // Custom: 현 위치 트래킹 함수
   func mapView(_ mapView: MTMapView!, updateCurrentLocation location: MTMapPoint!, withAccuracy accuracy: MTMapLocationAccuracy) {
     let currentLocation = location?.mapPointGeo()
