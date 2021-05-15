@@ -12,5 +12,8 @@ class ChatViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    // 임시
+    view.backgroundColor = .red
+    
   }
 }
