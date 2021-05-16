@@ -22,8 +22,6 @@ class HomeViewController: UIViewController {
   
   var locationManager: CLLocationManager!
   var currentLocation: CLLocationCoordinate2D!
-    
-    
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -67,9 +65,6 @@ class HomeViewController: UIViewController {
         make.size.equalTo(CGSize(width: 70, height: 70))
         make.right.equalTo(-20)
       }
-        
-        
-        
       // configure
       setSearchBar()
       setChatButton()
@@ -151,7 +146,6 @@ class HomeViewController: UIViewController {
     vc.title = "프로필"
     vc.navigationItem.largeTitleDisplayMode = .never
     navigationController?.pushViewController(vc, animated: true)
-    
   }
 }
 
