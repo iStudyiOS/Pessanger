@@ -402,7 +402,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/gcong/pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -427,7 +427,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/gcong/pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
