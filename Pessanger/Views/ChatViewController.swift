@@ -14,6 +14,5 @@ class ChatViewController: UIViewController {
     super.viewDidLoad()
     // 임시
     view.backgroundColor = .red
-    
   }
 }

@@ -8,14 +8,10 @@
 import UIKit
 
 class ProfileViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // 임시
-        view.backgroundColor = .blue
-    }
-    
-
-    
-
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // 임시
+    view.backgroundColor = .blue
+  }
 }
