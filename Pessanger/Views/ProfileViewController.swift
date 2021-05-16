@@ -11,7 +11,13 @@ class ProfileViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    setupNavigation()
     // 임시
     view.backgroundColor = .blue
+  }
+  
+  // MARK: Setup
+  fileprivate func setupNavigation() {
+    navigationController?.navigationBar.tintColor = .black
   }
 }
