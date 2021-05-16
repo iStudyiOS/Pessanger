@@ -42,6 +42,7 @@ final class ChatViewController: UIViewController {
     button.setTitle("🛠", for: .normal)
     return button
   }()
+  lazy var backBarButton = UIBarButtonItem(title: "뒤로 >", style: .done, target: self, action: #selector(popToLeftBarButtonItemTapped))
   
   // MARK: - Initialize
   init(opponentName: String) { // TODO: DI
@@ -74,6 +75,7 @@ final class ChatViewController: UIViewController {
   }
   
   private func setUp() {
+    setupNavigation()
     setUpUI()
     
     tableView.register(MessageCell.self, forCellReuseIdentifier: MessageCell.reuseIdentifier)
@@ -90,7 +92,7 @@ final class ChatViewController: UIViewController {
     self.title = tempOpponentName
     self.view.backgroundColor = .systemBackground
     
-    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: generateDummyButton)
+    self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: generateDummyButton)
     
     self.view.addSubview(tableView)
     self.view.addSubview(inputTextView)
@@ -108,6 +110,18 @@ final class ChatViewController: UIViewController {
     }
   }
   
+  // MARK: Setup
+  fileprivate func setupNavigation() {
+    navigationController?.navigationBar.tintColor = .black
+    navigationItem.hidesBackButton = true
+    navigationItem.setRightBarButton(backBarButton, animated: false)
+  }
+  
+  // MARK: Action
+  @objc fileprivate func popToLeftBarButtonItemTapped() {
+    navigationController?.popViewControllerToLeft()
+  }
+
   @objc private func generateDummy() {
     let randomContent = (0..<Int.random(in: 1...3)).map { _ in
       String(repeating: "\(Int.random(in: 0...9))", count: Int.random(in: 1...10)) + "\n"
@@ -290,8 +304,8 @@ final class MessageCell2: UITableViewCell {
     contentLabel.text = message.content
   }
   
-  
 }
+
 final class PaddingLabel: UILabel {
 
     var topInset: CGFloat = 5.0
