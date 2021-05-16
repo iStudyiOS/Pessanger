@@ -133,7 +133,6 @@ class HomeViewController: UIViewController {
   
   // MARK: Button Action
   @objc func chatButtonAction(_ sender: UIButton!) {
-    print("chat button pressed.")
     let vc = ChatViewController()
     vc.title = "대화"
     vc.navigationItem.largeTitleDisplayMode = .never
@@ -141,8 +140,7 @@ class HomeViewController: UIViewController {
   }
   
   @objc func profileButtonAction(_ sender: UIButton!) {
-    print("profile button pressed.")
-    let vc = ProfileViewController()
+    let vc = SettingsViewController()
     vc.title = "프로필"
     vc.navigationItem.largeTitleDisplayMode = .never
     navigationController?.pushViewController(vc, animated: true)
@@ -160,12 +158,12 @@ extension HomeViewController: MTMapViewDelegate {
   func mapView(_ mapView: MTMapView!, updateCurrentLocation location: MTMapPoint!, withAccuracy accuracy: MTMapLocationAccuracy) {
     let currentLocation = location?.mapPointGeo()
     if let latitude = currentLocation?.latitude, let longitude = currentLocation?.longitude{
-      print("MTMapView updateCurrentLocation (\(latitude),\(longitude)) accuracy (\(accuracy))")
+//      print("MTMapView updateCurrentLocation (\(latitude),\(longitude)) accuracy (\(accuracy))")
     }
   }
   
   func mapView(_ mapView: MTMapView?, updateDeviceHeading headingAngle: MTMapRotationAngle) {
-    print("MTMapView updateDeviceHeading (\(headingAngle)) degrees")
+//    print("MTMapView updateDeviceHeading (\(headingAngle)) degrees")
   }
   
   // 위치 허가 요청 함수.
