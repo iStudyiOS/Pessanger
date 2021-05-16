@@ -20,4 +20,8 @@ class ProfileViewController: UIViewController {
   fileprivate func setupNavigation() {
     navigationController?.navigationBar.tintColor = .black
   }
+
+    // 임시
+    view.backgroundColor = .blue
+  }
 }
