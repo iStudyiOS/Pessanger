@@ -26,6 +26,7 @@
 		1CDBE4CB26490BD6009A923B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4CA26490BD6009A923B /* ChatViewController.swift */; };
 		1CDBE4CD26490BE4009A923B /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4CC26490BE4009A923B /* MessageViewController.swift */; };
 		1CDBE4D026490D2B009A923B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDBE4CF26490D2B009A923B /* SnapKit */; };
+		1CFAFF6C2650D72F00F8D1D5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFAFF6B2650D72F00F8D1D5 /* Extensions.swift */; };
 		9854B41B264FC33400CEB785 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41A264FC33400CEB785 /* ProfileViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		1CDBE4C826490BCD009A923B /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		1CDBE4CA26490BD6009A923B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		1CDBE4CC26490BE4009A923B /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		1CFAFF6B2650D72F00F8D1D5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		9854B41A264FC33400CEB785 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 			children = (
 				1CB0A0D926492A130062C22D /* APIService.swift */,
 				1C8134872649608A0028454F /* LocationService.swift */,
+				1CFAFF6B2650D72F00F8D1D5 /* Extensions.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C8134882649608A0028454F /* LocationService.swift in Sources */,
+				1CFAFF6C2650D72F00F8D1D5 /* Extensions.swift in Sources */,
 				1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */,
 				1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */,
 				1CDBE4CB26490BD6009A923B /* ChatViewController.swift in Sources */,
@@ -402,7 +406,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/gcong/pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -427,7 +431,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/gcong/pessanger/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

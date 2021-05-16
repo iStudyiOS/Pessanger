@@ -137,7 +137,7 @@ class HomeViewController: UIViewController {
     let vc = ChatViewController()
     vc.title = "대화"
     vc.navigationItem.largeTitleDisplayMode = .never
-    navigationController?.pushViewController(vc, animated: true)
+    navigationController?.pushViewControllerFromLeft(vc)
   }
   
   @objc func profileButtonAction(_ sender: UIButton!) {
@@ -146,6 +146,11 @@ class HomeViewController: UIViewController {
     vc.title = "프로필"
     vc.navigationItem.largeTitleDisplayMode = .never
     navigationController?.pushViewController(vc, animated: true)
+  }
+  
+  @objc fileprivate func pushFromLeftButtonTapped() {
+    let vc = ChatViewController()
+    navigationController?.pushViewControllerFromLeft(vc)
   }
 }
 
