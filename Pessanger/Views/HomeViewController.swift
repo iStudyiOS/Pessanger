@@ -22,6 +22,8 @@ class HomeViewController: UIViewController {
   
   var locationManager: CLLocationManager!
   var currentLocation: CLLocationCoordinate2D!
+    
+    
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -65,6 +67,9 @@ class HomeViewController: UIViewController {
         make.size.equalTo(CGSize(width: 70, height: 70))
         make.right.equalTo(-20)
       }
+        
+        
+        
       // configure
       setSearchBar()
       setChatButton()
@@ -134,10 +139,19 @@ class HomeViewController: UIViewController {
   // MARK: Button Action
   @objc func chatButtonAction(_ sender: UIButton!) {
     print("chat button pressed.")
+    let vc = ChatViewController()
+    vc.title = "대화"
+    vc.navigationItem.largeTitleDisplayMode = .never
+    navigationController?.pushViewController(vc, animated: true)
   }
   
   @objc func profileButtonAction(_ sender: UIButton!) {
     print("profile button pressed.")
+    let vc = ProfileViewController()
+    vc.title = "프로필"
+    vc.navigationItem.largeTitleDisplayMode = .never
+    navigationController?.pushViewController(vc, animated: true)
+    
   }
 }
 
