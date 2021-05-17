@@ -71,6 +71,7 @@ class HomeViewController: UIViewController {
       setProfileButton()
     }
   }
+  
   // MARK: Setting Button
   func setChatButton() {
     chatButton.backgroundColor = .white
