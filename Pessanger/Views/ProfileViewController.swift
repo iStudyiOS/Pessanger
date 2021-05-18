@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import SnapKit
 
 class ProfileViewController: UIViewController {
+<<<<<<< HEAD
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,4 +17,10 @@ class ProfileViewController: UIViewController {
     }
     
 
+=======
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+  }
+>>>>>>> 3ac318330d3addcd6d25c67d5df7818a5118d3c0
 }
