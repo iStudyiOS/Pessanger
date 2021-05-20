@@ -9,8 +9,5 @@ import UIKit
 import SnapKit
 
 class ProfileViewController: UIViewController {
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-  }
+
 }
