@@ -9,8 +9,6 @@ import UIKit
 
 class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    
-    
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -32,7 +30,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     // MARK: Setup
     fileprivate func setupNavigation() {
         navigationController?.navigationBar.tintColor = .label
-
     }
     
     private func configureModels() {
@@ -42,14 +39,11 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             }
         })]))
         
-        
         sections.append(Section(title: "계정", options: [Option(title: "로그아웃", handler: { [weak self] in
             DispatchQueue.main.async {
                 self?.signOutTapped()
             }
         })]))
-        
-        
     }
     
     private func viewProfile() {
@@ -58,7 +52,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)
     }
-    
     
     private func signOutTapped() {
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
@@ -71,11 +64,9 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
-        
     }
     
     // MARK: -TableView
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
@@ -102,6 +93,4 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         let model = sections[section]
         return model.title
     }
- 
-    
 }
