@@ -17,6 +17,13 @@ struct Message {
 
 final class ChatViewController: UIViewController {
   
+  private enum Constants {
+    static let bottomViewHeight: CGFloat = 30 + 10
+    static let sendButtonImage: UIImage? = UIImage(named: "ic_send")
+    static let sendButtonSize: CGFloat = 25
+    static let maxInputLines: Int = 4
+  }
+  
   // MARK: - Properties
   private let tempOpponentName: String
   private var dummy: [Message] = [
@@ -24,7 +31,7 @@ final class ChatViewController: UIViewController {
     Message(isMe: false, sender: "Elon Musk", content: "Go DOGE", time: nil),
     Message(isMe: true, sender: "Pio", content: "Hi h i", time: nil),
   ]
-  private var activeInputView: UIView?
+  private var isInputActive: Bool = false
   
   // MARK: - Views
   private let tableView: UITableView = {
@@ -33,14 +40,37 @@ final class ChatViewController: UIViewController {
     return tableView
   }()
   private let inputTextView: UITextView = {
-    let textField = UITextView()
-    textField.backgroundColor = .systemGreen
-    return textField
+    let textView = UITextView()
+    textView.font = .preferredFont(forTextStyle: .body)
+    textView.backgroundColor = .systemGray5
+    textView.layer.cornerRadius = 10
+    textView.textContainerInset = .init(top: 5, left: 10, bottom: 5, right: 10)
+    textView.isScrollEnabled = false
+    return textView
+  }()
+  private let sendMessageButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setImage(Constants.sendButtonImage, for: .normal)
+    button.imageView?.contentMode = .scaleAspectFit
+    button.isEnabled = false
+    return button
   }()
   private let generateDummyButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("🛠", for: .normal)
     return button
+  }()
+  private let bottomView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .systemGray6
+    return view
+  }()
+  private let containerView: UIStackView = {
+    let view = UIStackView()
+    view.axis = .vertical
+    view.distribution = .fill
+    view.alignment = .fill
+    return view
   }()
   lazy var backBarButton = UIBarButtonItem(title: "뒤로 >", style: .done, target: self, action: #selector(popToLeftBarButtonItemTapped))
   
@@ -56,11 +86,6 @@ final class ChatViewController: UIViewController {
   // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing))
-//    tap.cancelsTouchesInView = false
-    self.view.addGestureRecognizer(tap)
-    
     setUp()
   }
   override func viewWillAppear(_ animated: Bool) {
@@ -74,18 +99,19 @@ final class ChatViewController: UIViewController {
     NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
+  // MARK: - Setup
   private func setUp() {
     setupNavigation()
     setUpUI()
-    
-    tableView.register(MessageCell.self, forCellReuseIdentifier: MessageCell.reuseIdentifier)
-    tableView.register(MessageCell2.self, forCellReuseIdentifier: MessageCell2.reuseIdentifier)
-    tableView.dataSource = self
-    tableView.separatorStyle = .none
-    
-    generateDummyButton.addTarget(self, action: #selector(generateDummy), for: .touchUpInside)
-    
-    
+    setUpTableView()
+    setUpListeners()
+    setUpInputTextView()
+  }
+  
+  fileprivate func setupNavigation() {
+    navigationController?.navigationBar.tintColor = .black
+    navigationItem.hidesBackButton = true
+    navigationItem.setRightBarButton(backBarButton, animated: false)
   }
   
   private func setUpUI() {
@@ -94,49 +120,132 @@ final class ChatViewController: UIViewController {
     
     self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: generateDummyButton)
     
-    self.view.addSubview(tableView)
-    self.view.addSubview(inputTextView)
-    
-    tableView.snp.makeConstraints {
-      $0.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-      $0.bottom.equalTo(inputTextView.snp.top)
+    bottomView.addSubview(inputTextView)
+    bottomView.addSubview(sendMessageButton)
+    sendMessageButton.snp.makeConstraints {
+      $0.height.width.equalTo(inputTextView.font!.lineHeight)
+      $0.top.greaterThanOrEqualToSuperview().inset(5)
+      $0.bottom.equalToSuperview().inset(5 + inputTextView.textContainerInset.bottom + inputTextView.contentInset.bottom)
+      $0.trailing.equalToSuperview().inset(15)
     }
-    
     inputTextView.snp.makeConstraints {
-      $0.top.equalTo(tableView.snp.bottom)
-      $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-      $0.height.equalTo(44)
-      $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(0)
+      $0.leading.equalToSuperview().inset(10)
+      $0.top.bottom.equalToSuperview().inset(5)
+      $0.trailing.equalTo(sendMessageButton.snp.leading).offset(-15)
+      $0.height.lessThanOrEqualTo(inputTextView.font!.lineHeight * CGFloat(Constants.maxInputLines) + inputTextView.textContainerInset.top + inputTextView.textContainerInset.bottom)
+    }
+    
+    containerView.addArrangedSubview(tableView)
+    containerView.addArrangedSubview(bottomView)
+    
+    self.view.addSubview(containerView)
+    containerView.snp.makeConstraints {
+      $0.edges.equalTo(self.view.safeAreaLayoutGuide)
     }
   }
   
-  // MARK: Setup
-  fileprivate func setupNavigation() {
-    navigationController?.navigationBar.tintColor = .black
-    navigationItem.hidesBackButton = true
-    navigationItem.setRightBarButton(backBarButton, animated: false)
+  private func setUpTableView() {
+    tableView.register(ReceivedMessageCell.self, forCellReuseIdentifier: ReceivedMessageCell.reuseIdentifier)
+    tableView.register(SentMessageCell.self, forCellReuseIdentifier: SentMessageCell.reuseIdentifier)
+    tableView.dataSource = self
+    tableView.separatorStyle = .none
   }
   
-  // MARK: Action
+  private func setUpListeners() {
+    let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing))
+    self.view.addGestureRecognizer(tap)
+    generateDummyButton.addTarget(self, action: #selector(generateDummy), for: .touchUpInside)
+    sendMessageButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+  }
+  
+  private func setUpInputTextView() {
+    inputTextView.delegate = self
+  }
+  
+  // MARK: - Methods
   @objc fileprivate func popToLeftBarButtonItemTapped() {
     navigationController?.popViewControllerToLeft()
   }
-
+  
   @objc private func generateDummy() {
-    let randomContent = (0..<Int.random(in: 1...3)).map { _ in
+    var randomContent = (1...Int.random(in: 1...3)).map { _ in
       String(repeating: "\(Int.random(in: 0...9))", count: Int.random(in: 1...10)) + "\n"
     }.reduce("", +)
-    let randomIsMe = Bool.random()
-    let randomMessage = Message(isMe: randomIsMe, sender: randomIsMe ? "Pio" : "Elon Musk", content: randomContent, time: nil)
-    dummy.append(randomMessage)
+    randomContent.removeLast() // 마지막 \n 제거
+    let randomMessage = Message(isMe: false, sender: tempOpponentName, content: randomContent, time: nil)
+    addMessage(randomMessage)
+  }
+  
+  @objc private func sendMessage() {
+    let content = inputTextView.text ?? ""
+    let randomMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
+    addMessage(randomMessage)
+    inputTextView.text.removeAll()
+    sendMessageButton.isEnabled = false
+  }
+  
+  private func addMessage(_ message: Message) {
+    dummy.append(message)
     let lastIndexPath = IndexPath(row: dummy.count-1, section: 0)
-    tableView.insertRows(at: [lastIndexPath], with: .none)
+    
+    UIView.performWithoutAnimation {
+      tableView.insertRows(at: [lastIndexPath], with: .none)
+    }
     tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: false)
   }
   
+}
+
+// MARK: - TableView DataSource
+
+extension ChatViewController: UITableViewDataSource {
+  
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return self.dummy.count
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let message = dummy[indexPath.row]
+    
+    if message.isMe {
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: SentMessageCell.reuseIdentifier, for: indexPath) as? SentMessageCell else { return UITableViewCell() }
+      cell.configure(dummy[indexPath.row])
+      return cell
+    } else {
+      guard let cell = tableView.dequeueReusableCell(withIdentifier: ReceivedMessageCell.reuseIdentifier, for: indexPath) as? ReceivedMessageCell else { return UITableViewCell() }
+      cell.configure(dummy[indexPath.row])
+      return cell
+    }
+  }
+  
+}
+
+// MARK: - TextView Delegate
+
+extension ChatViewController: UITextViewDelegate {
+  func textViewDidChange(_ textView: UITextView) {
+    sendMessageButton.isEnabled = !textView.text.isEmpty
+    if !textView.isScrollEnabled {
+      textView.sizeToFit()
+    }
+    if let lineHeight = textView.font?.lineHeight {
+      let textHeight = textView.contentSize.height - (textView.contentInset.top + textView.contentInset.bottom) - (textView.textContainerInset.top + textView.textContainerInset.bottom)
+      if Int(textHeight / lineHeight) >= Constants.maxInputLines {
+        textView.isScrollEnabled = true
+      } else {
+        textView.isScrollEnabled = false
+      }
+    }
+  }
+}
+
+// MARK: - Handle Keyboard Noti
+
+extension ChatViewController {
+  
   @objc private func keyboardWillShow(notification: Notification) {
-    guard activeInputView == nil else { return }
-    activeInputView = inputTextView
+    guard !isInputActive else { return }
+    isInputActive = true
     
     guard let info = notification.userInfo,
           let size = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
@@ -145,7 +254,7 @@ final class ChatViewController: UIViewController {
       return
     }
     
-    self.inputTextView.snp.updateConstraints {
+    self.containerView.snp.updateConstraints {
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(size.cgRectValue.height)
     }
     self.tableView.contentOffset.y += size.cgRectValue.height
@@ -157,16 +266,15 @@ final class ChatViewController: UIViewController {
   }
   
   @objc private func keyboardWillHide(notification: Notification) {
-    activeInputView = nil
+    isInputActive = false
     
     guard let info = notification.userInfo,
           let size = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
-          let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-          let curve = info[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt else {
+          let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
       return
     }
     
-    inputTextView.snp.updateConstraints {
+    containerView.snp.updateConstraints {
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(0)
     }
     self.tableView.contentOffset.y = max(0, self.tableView.contentOffset.y - size.cgRectValue.height)
@@ -179,40 +287,9 @@ final class ChatViewController: UIViewController {
   
 }
 
-extension ChatViewController: UITableViewDataSource {
-  
-  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return self.dummy.count
-  }
-  
-  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let message = dummy[indexPath.row]
-    
-    if message.isMe {
-      guard let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell2.reuseIdentifier, for: indexPath) as? MessageCell2 else { return UITableViewCell() }
-      cell.configure(dummy[indexPath.row])
-      return cell
-    } else {
-      guard let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.reuseIdentifier, for: indexPath) as? MessageCell else { return UITableViewCell() }
-      cell.configure(dummy[indexPath.row])
-      return cell
-    }
-  }
-  
-}
-
-final class MessageCell: UITableViewCell {
+final class ReceivedMessageCell: UITableViewCell {
   
   static var reuseIdentifier: String { return String(describing: Self.self) }
-  
-  let stackView: UIStackView = {
-    let stackView = UIStackView()
-    stackView.axis = .vertical
-    stackView.distribution = .fill
-    stackView.alignment = .leading
-    stackView.spacing = 5
-    return stackView
-  }()
   
   let nameLabel: UILabel = {
     let nameLabel = PaddingLabel()
@@ -227,6 +304,7 @@ final class MessageCell: UITableViewCell {
     contentLabel.backgroundColor = .systemGray5
     contentLabel.layer.cornerRadius = 10
     contentLabel.layer.masksToBounds = true
+    contentLabel.numberOfLines = 0
     return contentLabel
   }()
   
@@ -239,12 +317,35 @@ final class MessageCell: UITableViewCell {
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
     
-    stackView.addArrangedSubview(nameLabel)
-    stackView.addArrangedSubview(contentLabel)
+    let imageView = UIImageView(image: UIImage(named: "ic_profile"))
+    let labelStackView: UIStackView = {
+      let stackView = UIStackView()
+      stackView.axis = .vertical
+      stackView.distribution = .fill
+      stackView.alignment = .leading
+      stackView.spacing = 5
+      return stackView
+    }()
+    labelStackView.addArrangedSubview(nameLabel)
+    labelStackView.addArrangedSubview(contentLabel)
     
-    self.contentView.addSubview(stackView)
-    stackView.snp.makeConstraints {
-      $0.edges.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
+    let container: UIStackView = {
+      let stackView = UIStackView()
+      stackView.axis = .horizontal
+      stackView.distribution = .fill
+      stackView.alignment = .top
+      stackView.spacing = 5
+      return stackView
+    }()
+    container.addArrangedSubview(imageView)
+    container.addArrangedSubview(labelStackView)
+    imageView.snp.makeConstraints {
+      $0.width.height.equalTo(30)
+    }
+    self.contentView.addSubview(container)
+    container.snp.makeConstraints {
+      $0.top.bottom.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
+      $0.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
     }
   }
   required init?(coder: NSCoder) {
@@ -258,11 +359,11 @@ final class MessageCell: UITableViewCell {
   
 }
 
-final class MessageCell2: UITableViewCell {
+final class SentMessageCell: UITableViewCell {
   
   static var reuseIdentifier: String { return String(describing: Self.self) }
   
-  let stackView: UIStackView = {
+  let container: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .vertical
     stackView.distribution = .fill
@@ -277,6 +378,7 @@ final class MessageCell2: UITableViewCell {
     contentLabel.textColor = .systemBackground
     contentLabel.layer.cornerRadius = 10
     contentLabel.layer.masksToBounds = true
+    contentLabel.numberOfLines = 0
     return contentLabel
   }()
   
@@ -289,11 +391,12 @@ final class MessageCell2: UITableViewCell {
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
     
-    stackView.addArrangedSubview(contentLabel)
+    container.addArrangedSubview(contentLabel)
     
-    self.contentView.addSubview(stackView)
-    stackView.snp.makeConstraints {
-      $0.edges.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
+    self.contentView.addSubview(container)
+    container.snp.makeConstraints {
+      $0.top.bottom.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
+      $0.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
     }
   }
   required init?(coder: NSCoder) {
