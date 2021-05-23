@@ -8,13 +8,6 @@
 import UIKit
 import SnapKit
 
-struct Message {
-    var isMe: Bool
-    var sender: String
-    var content: String
-    var time: Date?
-}
-
 final class ChatViewController: UIViewController {
   
   private enum Constants {
@@ -25,13 +18,8 @@ final class ChatViewController: UIViewController {
   }
   
   // MARK: - Properties
-  private let tempOpponentName: String
-  private var dummy: [Message] = [
-    Message(isMe: false, sender: "Elon Musk", content: "Hello", time: nil),
-    Message(isMe: false, sender: "Elon Musk", content: "Go DOGE", time: nil),
-    Message(isMe: true, sender: "Pio", content: "Hi h i", time: nil),
-  ]
   private var isInputActive: Bool = false
+  let viewModel: ChatViewModel // TODO: IOC(프로토콜로,,)
   
   // MARK: - Views
   private let tableView: UITableView = {
@@ -75,8 +63,8 @@ final class ChatViewController: UIViewController {
   lazy var backBarButton = UIBarButtonItem(title: "뒤로 >", style: .done, target: self, action: #selector(popToLeftBarButtonItemTapped))
   
   // MARK: - Initialize
-  init(opponentName: String) { // TODO: DI
-    self.tempOpponentName = opponentName
+  init(viewModel: ChatViewModel) {
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   required init?(coder: NSCoder) {
@@ -86,6 +74,7 @@ final class ChatViewController: UIViewController {
   // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    bindViewModel()
     setUp()
   }
   override func viewWillAppear(_ animated: Bool) {
@@ -99,6 +88,35 @@ final class ChatViewController: UIViewController {
     NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
+  // MARK: - Bind ViewModel
+  private func bindViewModel() {
+    viewModel.opponentName.bindAndFire { [weak self] opponentName in
+      self?.title = opponentName
+    }
+    
+    viewModel.messages.bindAndFire { [weak self] messages in
+      guard let self = self else { return }
+      
+      // 백그라운드 스레드(네트워크)에서 받은 메시지를 메인 스레드에서 처리
+      DispatchQueue.main.async { [weak self] in
+        guard let self = self else { return }
+        let numberOfVisibleCells = self.tableView.numberOfRows(inSection: 0)
+        let diff = messages.count - numberOfVisibleCells
+        let lastIndexPath = IndexPath(row: messages.count - 1, section: 0)
+        
+        if diff > 1 {
+          self.tableView.reloadData()
+          self.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: true)
+        } else if diff == 1 {
+          UIView.performWithoutAnimation { [weak self] in
+            self?.tableView.insertRows(at: [lastIndexPath], with: .none)
+          }
+          self.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: false)
+        }
+      }
+    }
+  }
+  
   // MARK: - Setup
   private func setUp() {
     setupNavigation()
@@ -109,13 +127,12 @@ final class ChatViewController: UIViewController {
   }
   
   fileprivate func setupNavigation() {
-    navigationController?.navigationBar.tintColor = .black
+    navigationController?.navigationBar.tintColor = .label
     navigationItem.hidesBackButton = true
     navigationItem.setRightBarButton(backBarButton, animated: false)
   }
   
   private func setUpUI() {
-    self.title = tempOpponentName
     self.view.backgroundColor = .systemBackground
     
     self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: generateDummyButton)
@@ -167,53 +184,42 @@ final class ChatViewController: UIViewController {
     navigationController?.popViewControllerToLeft()
   }
   
-  @objc private func generateDummy() {
-    var randomContent = (1...Int.random(in: 1...3)).map { _ in
-      String(repeating: "\(Int.random(in: 0...9))", count: Int.random(in: 1...10)) + "\n"
-    }.reduce("", +)
-    randomContent.removeLast() // 마지막 \n 제거
-    let randomMessage = Message(isMe: false, sender: tempOpponentName, content: randomContent, time: nil)
-    addMessage(randomMessage)
-  }
-  
   @objc private func sendMessage() {
-    let content = inputTextView.text ?? ""
-    let randomMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
-    addMessage(randomMessage)
+    guard let content = inputTextView.text,
+          !content.isEmpty else {
+      return
+    }
+    
+    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
+    viewModel.addMessage(newMessage)
+    
     inputTextView.text.removeAll()
     sendMessageButton.isEnabled = false
   }
   
-  private func addMessage(_ message: Message) {
-    dummy.append(message)
-    let lastIndexPath = IndexPath(row: dummy.count-1, section: 0)
-    
-    UIView.performWithoutAnimation {
-      tableView.insertRows(at: [lastIndexPath], with: .none)
-    }
-    tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: false)
+  @objc private func generateDummy() { // For Tests
+    viewModel.receiveMessage()
   }
   
 }
 
 // MARK: - TableView DataSource
-
 extension ChatViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return self.dummy.count
+    return self.viewModel.messages.value.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let message = dummy[indexPath.row]
+    let message = viewModel.messages.value[indexPath.row]
     
     if message.isMe {
       guard let cell = tableView.dequeueReusableCell(withIdentifier: SentMessageCell.reuseIdentifier, for: indexPath) as? SentMessageCell else { return UITableViewCell() }
-      cell.configure(dummy[indexPath.row])
+      cell.configure(message)
       return cell
     } else {
       guard let cell = tableView.dequeueReusableCell(withIdentifier: ReceivedMessageCell.reuseIdentifier, for: indexPath) as? ReceivedMessageCell else { return UITableViewCell() }
-      cell.configure(dummy[indexPath.row])
+      cell.configure(message)
       return cell
     }
   }
@@ -221,8 +227,8 @@ extension ChatViewController: UITableViewDataSource {
 }
 
 // MARK: - TextView Delegate
-
 extension ChatViewController: UITextViewDelegate {
+  
   func textViewDidChange(_ textView: UITextView) {
     sendMessageButton.isEnabled = !textView.text.isEmpty
     if !textView.isScrollEnabled {
@@ -237,10 +243,10 @@ extension ChatViewController: UITextViewDelegate {
       }
     }
   }
+  
 }
 
 // MARK: - Handle Keyboard Noti
-
 extension ChatViewController {
   
   @objc private func keyboardWillShow(notification: Notification) {
@@ -284,146 +290,5 @@ extension ChatViewController {
       self.view.layoutIfNeeded()
     })
   }
-  
-}
-
-final class ReceivedMessageCell: UITableViewCell {
-  
-  static var reuseIdentifier: String { return String(describing: Self.self) }
-  
-  let nameLabel: UILabel = {
-    let nameLabel = PaddingLabel()
-    nameLabel.text = "??"
-    nameLabel.layer.cornerRadius = 10
-    nameLabel.layer.masksToBounds = true
-    return nameLabel
-  }()
-  
-  let contentLabel: UILabel = {
-    let contentLabel = PaddingLabel()
-    contentLabel.backgroundColor = .systemGray5
-    contentLabel.layer.cornerRadius = 10
-    contentLabel.layer.masksToBounds = true
-    contentLabel.numberOfLines = 0
-    return contentLabel
-  }()
-  
-  private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-    super.init(style: style, reuseIdentifier: reuseIdentifier)
-    self.backgroundColor = .clear
-    self.selectionStyle = .none
-    
-    self.layoutMargins = .zero
-    self.separatorInset = .zero
-    self.preservesSuperviewLayoutMargins = false
-    
-    let imageView = UIImageView(image: UIImage(named: "ic_profile"))
-    let labelStackView: UIStackView = {
-      let stackView = UIStackView()
-      stackView.axis = .vertical
-      stackView.distribution = .fill
-      stackView.alignment = .leading
-      stackView.spacing = 5
-      return stackView
-    }()
-    labelStackView.addArrangedSubview(nameLabel)
-    labelStackView.addArrangedSubview(contentLabel)
-    
-    let container: UIStackView = {
-      let stackView = UIStackView()
-      stackView.axis = .horizontal
-      stackView.distribution = .fill
-      stackView.alignment = .top
-      stackView.spacing = 5
-      return stackView
-    }()
-    container.addArrangedSubview(imageView)
-    container.addArrangedSubview(labelStackView)
-    imageView.snp.makeConstraints {
-      $0.width.height.equalTo(30)
-    }
-    self.contentView.addSubview(container)
-    container.snp.makeConstraints {
-      $0.top.bottom.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
-      $0.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
-    }
-  }
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  func configure(_ message: Message) {
-    nameLabel.text = message.sender
-    contentLabel.text = message.content
-  }
-  
-}
-
-final class SentMessageCell: UITableViewCell {
-  
-  static var reuseIdentifier: String { return String(describing: Self.self) }
-  
-  let container: UIStackView = {
-    let stackView = UIStackView()
-    stackView.axis = .vertical
-    stackView.distribution = .fill
-    stackView.alignment = .trailing
-    stackView.spacing = 5
-    return stackView
-  }()
-  
-  let contentLabel: UILabel = {
-    let contentLabel = PaddingLabel()
-    contentLabel.backgroundColor = .systemBlue
-    contentLabel.textColor = .systemBackground
-    contentLabel.layer.cornerRadius = 10
-    contentLabel.layer.masksToBounds = true
-    contentLabel.numberOfLines = 0
-    return contentLabel
-  }()
-  
-  private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-    super.init(style: style, reuseIdentifier: reuseIdentifier)
-    self.backgroundColor = .clear
-    self.selectionStyle = .none
-    
-    self.layoutMargins = .zero
-    self.separatorInset = .zero
-    self.preservesSuperviewLayoutMargins = false
-    
-    container.addArrangedSubview(contentLabel)
-    
-    self.contentView.addSubview(container)
-    container.snp.makeConstraints {
-      $0.top.bottom.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
-      $0.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
-    }
-  }
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  func configure(_ message: Message) {
-    contentLabel.text = message.content
-  }
-  
-}
-
-final class PaddingLabel: UILabel {
-
-    var topInset: CGFloat = 5.0
-    var bottomInset: CGFloat = 5.0
-    var leftInset: CGFloat = 5.0
-    var rightInset: CGFloat = 5.0
-    
-    override func drawText(in rect: CGRect) {
-      let insets = UIEdgeInsets.init(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
-      super.drawText(in: rect.inset(by: insets))
-    }
-
-    override var intrinsicContentSize: CGSize {
-      let size = super.intrinsicContentSize
-      return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
-    }
   
 }
