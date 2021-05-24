@@ -98,7 +98,7 @@ class HomeViewController: UIViewController {
     
     // MARK: Button Action
     @objc func chatButtonAction(_ sender: UIButton!) {
-        let vc = ChatViewController()
+        let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
         vc.title = "대화"
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewControllerFromLeft(vc)
@@ -112,7 +112,7 @@ class HomeViewController: UIViewController {
     }
     
     @objc fileprivate func pushFromLeftButtonTapped() {
-        let vc = ChatViewController()
+        let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
         navigationController?.pushViewControllerFromLeft(vc)
     }
 }

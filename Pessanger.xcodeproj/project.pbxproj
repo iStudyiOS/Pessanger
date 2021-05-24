@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C8134882649608A0028454F /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8134872649608A0028454F /* LocationService.swift */; };
-		1CB0A0CD2649265A0062C22D /* DaumMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0A0CC2649265A0062C22D /* DaumMap.framework */; };
 		1CB0A0CF264926810062C22D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED2264923380062C22D /* QuartzCore.framework */; };
 		1CB0A0D0264926890062C22D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */; };
 		1CB0A0D2264926900062C22D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0A0D1264926900062C22D /* Metal.framework */; };
@@ -16,7 +14,6 @@
 		1CB0A0D4264926A70062C22D /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED5264923470062C22D /* libxml2.tbd */; };
 		1CB0A0D5264926AF0062C22D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED4264923400062C22D /* libc++.tbd */; };
 		1CB0A0D6264927B10062C22D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED0264923320062C22D /* CoreLocation.framework */; };
-		1CB0A0DA26492A130062C22D /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB0A0D926492A130062C22D /* APIService.swift */; };
 		1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B426490B97009A923B /* AppDelegate.swift */; };
 		1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B626490B97009A923B /* SceneDelegate.swift */; };
 		1CDBE4BC26490B97009A923B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CDBE4BA26490B97009A923B /* Main.storyboard */; };
@@ -30,20 +27,22 @@
 		9854B41B264FC33400CEB785 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41A264FC33400CEB785 /* SettingsViewController.swift */; };
 		9854B41E2650FDC500CEB785 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41D2650FDC500CEB785 /* ProfileModel.swift */; };
 		9854B4202651008500CEB785 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41F2651008500CEB785 /* ProfileViewController.swift */; };
+		D4E17304265A5A44003ECC18 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E17303265A5A44003ECC18 /* ChatViewModel.swift */; };
+		D4E17306265A5EA4003ECC18 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E17305265A5EA4003ECC18 /* Dynamic.swift */; };
+		D4E17308265A5EBC003ECC18 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E17307265A5EBC003ECC18 /* Message.swift */; };
+		D4E1730A265A6064003ECC18 /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E17309265A6064003ECC18 /* PaddingLabel.swift */; };
+		D4E1730C265A607E003ECC18 /* SentMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E1730B265A607E003ECC18 /* SentMessageCell.swift */; };
+		D4E1730E265A6093003ECC18 /* ReceivedMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E1730D265A6093003ECC18 /* ReceivedMessageCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1C8134872649608A0028454F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		1CB09ED0264923320062C22D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1CB09ED2264923380062C22D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1CB09ED4264923400062C22D /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		1CB09ED5264923470062C22D /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		1CB09ED62649234D0062C22D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		1CB0A0C9264923C90062C22D /* KakaoMap-Bridgeheader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KakaoMap-Bridgeheader.h"; sourceTree = "<group>"; };
-		1CB0A0CC2649265A0062C22D /* DaumMap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DaumMap.framework; path = ../../../Downloads/IOS_DaumMap_SDK_1.4.0/lib/DaumMap.embeddedframework/DaumMap.framework; sourceTree = "<group>"; };
 		1CB0A0D1264926900062C22D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		1CB0A0D926492A130062C22D /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		1CDBE4B126490B97009A923B /* Pessanger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pessanger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDBE4B426490B97009A923B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CDBE4B626490B97009A923B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -58,6 +57,12 @@
 		9854B41A264FC33400CEB785 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		9854B41D2650FDC500CEB785 /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
 		9854B41F2651008500CEB785 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		D4E17303265A5A44003ECC18 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		D4E17305265A5EA4003ECC18 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
+		D4E17307265A5EBC003ECC18 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		D4E17309265A6064003ECC18 /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
+		D4E1730B265A607E003ECC18 /* SentMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentMessageCell.swift; sourceTree = "<group>"; };
+		D4E1730D265A6093003ECC18 /* ReceivedMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedMessageCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +74,6 @@
 				1CB0A0D0264926890062C22D /* SystemConfiguration.framework in Frameworks */,
 				1CB0A0D32649269F0062C22D /* libsqlite3.tbd in Frameworks */,
 				1CDBE4D026490D2B009A923B /* SnapKit in Frameworks */,
-				1CB0A0CD2649265A0062C22D /* DaumMap.framework in Frameworks */,
 				1CB0A0D4264926A70062C22D /* libxml2.tbd in Frameworks */,
 				1CB0A0D6264927B10062C22D /* CoreLocation.framework in Frameworks */,
 				1CB0A0D5264926AF0062C22D /* libc++.tbd in Frameworks */,
@@ -88,6 +92,9 @@
 				1CDBE4C826490BCD009A923B /* HomeViewController.swift */,
 				9854B41A264FC33400CEB785 /* SettingsViewController.swift */,
 				9854B41F2651008500CEB785 /* ProfileViewController.swift */,
+				D4E17309265A6064003ECC18 /* PaddingLabel.swift */,
+				D4E1730B265A607E003ECC18 /* SentMessageCell.swift */,
+				D4E1730D265A6093003ECC18 /* ReceivedMessageCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -116,19 +123,9 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1CB0A0C8264923880062C22D /* Header */ = {
-			isa = PBXGroup;
-			children = (
-				1CB0A0C9264923C90062C22D /* KakaoMap-Bridgeheader.h */,
-			);
-			path = Header;
-			sourceTree = "<group>";
-		};
 		1CB0A0D826492A040062C22D /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				1CB0A0D926492A130062C22D /* APIService.swift */,
-				1C8134872649608A0028454F /* LocationService.swift */,
 				1CFAFF6B2650D72F00F8D1D5 /* Extensions.swift */,
 			);
 			path = Service;
@@ -154,10 +151,9 @@
 		1CDBE4B326490B97009A923B /* Pessanger */ = {
 			isa = PBXGroup;
 			children = (
+				D4E17302265A4814003ECC18 /* ViewModel */,
 				9854B41C2650FDAB00CEB785 /* Model */,
 				1CB0A0D826492A040062C22D /* Service */,
-				1CB0A0CC2649265A0062C22D /* DaumMap.framework */,
-				1CB0A0C8264923880062C22D /* Header */,
 				1CDBE4B426490B97009A923B /* AppDelegate.swift */,
 				1CDBE4B626490B97009A923B /* SceneDelegate.swift */,
 				1CB09E1C2649148A0062C22D /* Resources */,
@@ -170,9 +166,19 @@
 		9854B41C2650FDAB00CEB785 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D4E17305265A5EA4003ECC18 /* Dynamic.swift */,
 				9854B41D2650FDC500CEB785 /* ProfileModel.swift */,
+				D4E17307265A5EBC003ECC18 /* Message.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		D4E17302265A4814003ECC18 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4E17303265A5A44003ECC18 /* ChatViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,16 +257,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C8134882649608A0028454F /* LocationService.swift in Sources */,
+				D4E1730E265A6093003ECC18 /* ReceivedMessageCell.swift in Sources */,
 				1CFAFF6C2650D72F00F8D1D5 /* Extensions.swift in Sources */,
 				1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */,
 				1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */,
 				1CDBE4CB26490BD6009A923B /* ChatViewController.swift in Sources */,
 				9854B41E2650FDC500CEB785 /* ProfileModel.swift in Sources */,
 				1CDBE4CD26490BE4009A923B /* MessageViewController.swift in Sources */,
-				1CB0A0DA26492A130062C22D /* APIService.swift in Sources */,
 				9854B41B264FC33400CEB785 /* SettingsViewController.swift in Sources */,
+				D4E17306265A5EA4003ECC18 /* Dynamic.swift in Sources */,
 				1CDBE4C926490BCD009A923B /* HomeViewController.swift in Sources */,
+				D4E1730C265A607E003ECC18 /* SentMessageCell.swift in Sources */,
+				D4E17308265A5EBC003ECC18 /* Message.swift in Sources */,
+				D4E1730A265A6064003ECC18 /* PaddingLabel.swift in Sources */,
+				D4E17304265A5A44003ECC18 /* ChatViewModel.swift in Sources */,
 				9854B4202651008500CEB785 /* ProfileViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,7 +432,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -447,7 +457,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = heyziin.Pessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Pessanger/Header/KakaoMap-BridgeHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
