@@ -7,115 +7,231 @@
 
 import UIKit
 import SnapKit
+import MapKit
+import CoreLocation
 
-class HomeViewController: UIViewController {
-    // MARK: UI - Button
-    var chatButton = UIButton()
-    var profileButton = UIButton()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
-        self.view.addSubview(chatButton)
-        self.view.addSubview(profileButton)
-        
-        // MARK: Constraints
-        chatButton.snp.makeConstraints { make in
-            make.bottom.equalTo(-20)
-            make.size.equalTo(CGSize(width: 70, height: 70))
-            make.left.equalTo(20)
-        }
-        profileButton.snp.makeConstraints { make in
-            make.bottom.equalTo(-20)
-            make.size.equalTo(CGSize(width: 70, height: 70))
-            make.right.equalTo(-20)
-        }
-        // configure
-        setSearchBar()
-        setChatButton()
-        setProfileButton()
-    }
-    
-    func setChatButton() {
-        chatButton.backgroundColor = .white
-        chatButton.layer.cornerRadius = 70 * 0.5
-        chatButton.clipsToBounds = true
-        chatButton.setImage(UIImage(named: "ic_chat"), for: .normal)
-        chatButton.imageEdgeInsets = UIEdgeInsets(top: 13, left: 12, bottom: 13, right: 12)
-        makeShadow(chatButton)
-        chatButton.addTarget(self, action: #selector(chatButtonAction), for: .touchUpInside)
-    }
-    func setProfileButton() {
-        profileButton.backgroundColor = .white
-        profileButton.layer.cornerRadius = 70 * 0.5
-        profileButton.clipsToBounds = true
-        profileButton.setImage(UIImage(named: "ic_profile"), for: .normal)
-        profileButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        makeShadow(profileButton)
-        profileButton.addTarget(self, action: #selector(profileButtonAction), for: .touchUpInside)
-    }
-    
-    func makeShadow(_ item: UIButton) {
-        item.layer.masksToBounds = false
-        item.layer.shadowColor = UIColor.gray.cgColor
-        item.layer.shadowOpacity = 0.5
-        item.layer.shadowOffset = CGSize.zero
-        item.layer.shadowRadius = 5
-    }
-    
-    // MARK: Setting searchBar
-    func setSearchBar() {
-        let searchBar = UISearchBar()
-        searchBar.setImage(UIImage(named: "ic_search"), for: UISearchBar.Icon.search, state: .normal)
-        self.navigationController?.navigationBar.topItem?.titleView = searchBar
-        
-        searchBar.setImage(UIImage(named: "ic_clear"), for: .clear, state: .normal)
-        searchBar.placeholder = "이름을 검색하세요."
-        searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
-        
-        searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
-        searchBar.layer.shadowOpacity = 0.25
-        searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
-        searchBar.layer.shadowRadius = 5
-        
-        if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
-            textfield.backgroundColor = UIColor.white
-            textfield.layer.cornerRadius = 17
-            textfield.clipsToBounds = true
-            
-            if let leftView = textfield.leftView as? UIImageView {
-                leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
-                leftView.tintColor = UIColor.black
-            }
-            
-            if let rightView = textfield.rightView as? UIImageView {
-                rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
-                rightView.tintColor = UIColor.black
-            }
-        }
-    }
-    
-    // MARK: Button Action
-    @objc func chatButtonAction(_ sender: UIButton!) {
-        let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
-        vc.title = "대화"
-        vc.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewControllerFromLeft(vc)
-    }
-    
-    @objc func profileButtonAction(_ sender: UIButton!) {
-        let vc = SettingsViewController()
-        vc.title = "프로필"
-        vc.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc fileprivate func pushFromLeftButtonTapped() {
-        let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
-        navigationController?.pushViewControllerFromLeft(vc)
-    }
+protocol HandleMapSearch {
+  func dropPinZoomIn(placemark: MKPlacemark)
 }
 
+class HomeViewController: UIViewController, UISearchControllerDelegate {
+  // MARK: UI - Button
+  var chatButton = UIButton()
+  var profileButton = UIButton()
+  
+  var mapView = MKMapView()
+  var locationManager = CLLocationManager()
+  var currentLocation: CLLocation!
+  var resultSearchController = UISearchController()
+  
+  var selectedPin: MKPlacemark? = nil
+  
+  // MARK: view-Cycle
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // mapView
+    mapView.showsUserLocation = true
+    locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest // bettery
+    locationManager.requestWhenInUseAuthorization()
+    locationManager.startUpdatingLocation()
+    
+    if CLLocationManager.locationServicesEnabled() {
+      print("location service ON.")
+    } else {
+      print("location service OFF.")
+    }
+    
+    // subviews
+    self.view.addSubview(mapView)
+    self.view.addSubview(chatButton)
+    self.view.addSubview(profileButton)
+    
+    // MARK: Constraints
+    mapView.snp.makeConstraints { make in
+      make.bottom.equalToSuperview()
+      make.top.equalToSuperview()
+      make.leading.equalToSuperview()
+      make.trailing.equalToSuperview()
+    }
+    chatButton.snp.makeConstraints { make in
+      make.bottom.equalTo(-20)
+      make.size.equalTo(CGSize(width: 70, height: 70))
+      make.left.equalTo(20)
+    }
+    profileButton.snp.makeConstraints { make in
+      make.bottom.equalTo(-20)
+      make.size.equalTo(CGSize(width: 70, height: 70))
+      make.right.equalTo(-20)
+    }
+    
+    // configure
+    setResultSearchBar()
+    setChatButton()
+    setProfileButton()
+    
+    // locationSearchTable
+    resultSearchController.delegate = self
+    let locationSearchTable = LocationSearchTable()
+    resultSearchController = UISearchController(searchResultsController: locationSearchTable)
+    navigationItem.searchController = resultSearchController
+    resultSearchController.searchResultsUpdater = locationSearchTable
+    locationSearchTable.mapView = mapView
+    locationSearchTable.handleMapSearchDelegate = self
+  }
+  
+  func setChatButton() {
+    chatButton.backgroundColor = .white
+    chatButton.layer.cornerRadius = 70 * 0.5
+    chatButton.clipsToBounds = true
+    chatButton.setImage(UIImage(named: "ic_chat"), for: .normal)
+    chatButton.imageEdgeInsets = UIEdgeInsets(top: 13, left: 12, bottom: 13, right: 12)
+    makeShadow(chatButton)
+    chatButton.addTarget(self, action: #selector(chatButtonAction), for: .touchUpInside)
+  }
+  func setProfileButton() {
+    profileButton.backgroundColor = .white
+    profileButton.layer.cornerRadius = 70 * 0.5
+    profileButton.clipsToBounds = true
+    profileButton.setImage(UIImage(named: "ic_profile"), for: .normal)
+    profileButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    makeShadow(profileButton)
+    profileButton.addTarget(self, action: #selector(profileButtonAction), for: .touchUpInside)
+  }
+  
+  func makeShadow(_ item: UIButton) {
+    item.layer.masksToBounds = false
+    item.layer.shadowColor = UIColor.gray.cgColor
+    item.layer.shadowOpacity = 0.5
+    item.layer.shadowOffset = CGSize.zero
+    item.layer.shadowRadius = 5
+  }
+  
+  // MARK: Setting resultSearchBar
+  func setResultSearchBar() {
+    self.navigationItem.searchController = resultSearchController
+    self.navigationItem.title = "친구 찾기"
+    
+    let searchBar = resultSearchController.searchBar
+    
+    searchBar.placeholder = "이름을 검색하세요."
+    searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+    searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
+    searchBar.layer.shadowOpacity = 0.25
+    searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
+    resultSearchController.searchBar.layer.shadowRadius = 5
+    
+    searchBar.sizeToFit()
+    resultSearchController.dimsBackgroundDuringPresentation = true
+    
+    definesPresentationContext = true
+    
+    if let textfield = resultSearchController.searchBar.value(forKey: "searchField") as? UITextField {
+      textfield.backgroundColor = UIColor.white
+      textfield.layer.cornerRadius = 17
+      textfield.clipsToBounds = true
+      
+      if let leftView = textfield.leftView as? UIImageView {
+        leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
+        leftView.tintColor = UIColor.black
+      }
+      
+      if let rightView = textfield.rightView as? UIImageView {
+        rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
+        rightView.tintColor = UIColor.black
+      }
+    }
+  }
+  
+  // MARK: Button Action
+  @objc func chatButtonAction(_ sender: UIButton!) {
+    let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
+    vc.title = "대화"
+    vc.navigationItem.largeTitleDisplayMode = .never
+    navigationController?.pushViewControllerFromLeft(vc)
+  }
+  
+  @objc func profileButtonAction(_ sender: UIButton!) {
+    let vc = SettingsViewController()
+    vc.title = "프로필"
+    vc.navigationItem.largeTitleDisplayMode = .never
+    navigationController?.pushViewController(vc, animated: true)
+  }
+  
+  @objc fileprivate func pushFromLeftButtonTapped() {
+    let vc = ChatViewController(viewModel: ChatViewModel(opponentName: "Elon Musk"))
+    navigationController?.pushViewControllerFromLeft(vc)
+  }
+  
+  func searchBarTapped() {
+    let vc = LocationSearchTable()
+    navigationController?.pushViewController(vc, animated: true)
+  }
+}
 
-// MARK: Setting Button
+// MARK: CLLocationManagerDelegate
+extension HomeViewController: CLLocationManagerDelegate {
+  func printCoordinates() {
+    if let locaton = locationManager.location?.coordinate {
+      print("location: \(locaton)")
+    }
+  }
+  func render(_ locations: CLLocation) {
+    let coordinate = CLLocationCoordinate2D(latitude: locations.coordinate.latitude, longitude: locations.coordinate.longitude)
+    printCoordinates()
+    
+    let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01) // delta 값이 1보다 작을수록 확대됨.
+    let region = MKCoordinateRegion(center: coordinate,
+                                    span: span)
+    self.mapView.setRegion(region, animated: true)
+  }
+  
+  // 업데이트 되는 위치 정보 표시.
+  func locationManager(
+    _ manager: CLLocationManager,
+    didUpdateLocations locations: [CLLocation]) {
+    currentLocation = locations.first
+    //    currentLocation = manager.location
+    guard currentLocation != nil else {
+      print("currentLocation is nil.")
+      return
+    }
+    print("got location!")
+    printCoordinates()
+    manager.stopUpdatingLocation()
+    render(currentLocation)
+  }
+  
+  func locationManager(
+    _ manager: CLLocationManager,
+    didFailWithError error: Error) {
+    print(error.localizedDescription)
+  }
+}
+
+// MARK: MKMapViewDelegate
+extension HomeViewController: MKMapViewDelegate {
+}
+
+// MARK: Handle Map Search
+extension HomeViewController: HandleMapSearch {
+  func dropPinZoomIn(placemark:MKPlacemark){
+    // cache the pin
+    selectedPin = placemark
+    // clear existing pins
+    mapView.removeAnnotations(mapView.annotations)
+    let annotation = MKPointAnnotation()
+    annotation.coordinate = placemark.coordinate
+    annotation.title = placemark.name
+    if let city = placemark.locality,
+       let state = placemark.administrativeArea {
+      annotation.subtitle = "\(city) \(state)"
+    }
+    mapView.addAnnotation(annotation)
+    let span = MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+    let region = MKCoordinateRegion(center: placemark.coordinate,
+                                    span: span)
+    mapView.setRegion(region, animated: true)
+  }
+}
+
