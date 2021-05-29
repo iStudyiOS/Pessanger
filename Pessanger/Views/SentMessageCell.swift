@@ -11,14 +11,17 @@ final class SentMessageCell: UITableViewCell {
   
   static var reuseIdentifier: String { return String(describing: Self.self) }
   
-  let container: UIStackView = {
-    let stackView = UIStackView()
-    stackView.axis = .vertical
-    stackView.distribution = .fill
-    stackView.alignment = .trailing
-    stackView.spacing = 5
-    return stackView
-  }()
+  private enum Constants {
+    static let padding: (top: Int, bottom: Int, leading: Int, trailing: Int) = (
+      top: 5,
+      bottom: 5,
+      leading: 5,
+      trailing: 5
+    )
+  }
+  
+  // Cell 내부에 기본적으로 Padding(안쪽 여백)을 주기 위한 뷰
+  private let paddingContainer: UIView = UIView()
   
   let contentLabel: UILabel = {
     let contentLabel = PaddingLabel()
@@ -39,12 +42,19 @@ final class SentMessageCell: UITableViewCell {
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
     
-    container.addArrangedSubview(contentLabel)
+    paddingContainer.addSubview(contentLabel)
+    contentLabel.snp.makeConstraints {
+      $0.top.bottom.equalToSuperview()
+      $0.trailing.equalToSuperview().inset(10)
+      $0.leading.greaterThanOrEqualToSuperview().inset(50)
+    }
     
-    self.contentView.addSubview(container)
-    container.snp.makeConstraints {
-      $0.top.bottom.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
-      $0.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
+    self.contentView.addSubview(paddingContainer)
+    paddingContainer.snp.makeConstraints {
+      $0.top.equalToSuperview().inset(Constants.padding.top)
+      $0.bottom.equalToSuperview().inset(Constants.padding.bottom)
+      $0.leading.equalToSuperview().inset(Constants.padding.leading)
+      $0.trailing.equalToSuperview().inset(Constants.padding.trailing)
     }
   }
   required init?(coder: NSCoder) {
