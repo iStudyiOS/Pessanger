@@ -26,7 +26,7 @@ final class SentMessageCell: UITableViewCell {
   let contentLabel: UILabel = {
     let contentLabel = PaddingLabel()
     contentLabel.backgroundColor = .systemBlue
-    contentLabel.textColor = .systemBackground
+    contentLabel.textColor = .white
     contentLabel.layer.cornerRadius = 10
     contentLabel.layer.masksToBounds = true
     contentLabel.numberOfLines = 0
