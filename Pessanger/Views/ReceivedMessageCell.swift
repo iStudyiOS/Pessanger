@@ -12,7 +12,7 @@ final class ReceivedMessageCell: UITableViewCell {
   static var reuseIdentifier: String { return String(describing: Self.self) }
   
   private enum Constants {
-    static let padding: (top: Int, bottom: Int, leading: Int, trailing: Int) = (
+    static let cellPadding: (top: Int, bottom: Int, leading: Int, trailing: Int) = (
       top: 5,
       bottom: 5,
       leading: 5,
@@ -82,10 +82,10 @@ final class ReceivedMessageCell: UITableViewCell {
     
     self.contentView.addSubview(paddingContainer)
     paddingContainer.snp.makeConstraints {
-      $0.top.equalToSuperview().inset(Constants.padding.top)
-      $0.bottom.equalToSuperview().inset(Constants.padding.bottom)
-      $0.leading.equalToSuperview().inset(Constants.padding.leading)
-      $0.trailing.equalToSuperview().inset(Constants.padding.trailing)
+      $0.top.equalToSuperview().inset(Constants.cellPadding.top)
+      $0.bottom.equalToSuperview().inset(Constants.cellPadding.bottom)
+      $0.leading.equalToSuperview().inset(Constants.cellPadding.leading)
+      $0.trailing.equalToSuperview().inset(Constants.cellPadding.trailing)
     }
   }
   required init?(coder: NSCoder) {
