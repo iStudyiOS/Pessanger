@@ -196,8 +196,7 @@ final class ChatViewController: UIViewController {
     let newMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
     viewModel.addMessage(newMessage)
     
-    inputTextView.text.removeAll()
-    sendMessageButton.isEnabled = false
+    clearInput()
   }
   
   @objc private func generateDummy() { // For Tests
@@ -243,6 +242,12 @@ extension ChatViewController: UITextViewDelegate {
     } else {
       textView.isScrollEnabled = false
     }
+  }
+  
+  private func clearInput() {
+    inputTextView.isScrollEnabled = false
+    inputTextView.text.removeAll()
+    inputTextView.insertText("")
   }
   
 }
