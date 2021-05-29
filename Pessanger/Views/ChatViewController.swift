@@ -185,10 +185,8 @@ final class ChatViewController: UIViewController {
   }
   
   @objc private func sendMessage() {
-    guard let content = inputTextView.text,
-          !content.isEmpty else {
-      return
-    }
+    let content = inputTextView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !content.isEmpty else { return }
     
     let newMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
     viewModel.addMessage(newMessage)
@@ -230,7 +228,7 @@ extension ChatViewController: UITableViewDataSource {
 extension ChatViewController: UITextViewDelegate {
   
   func textViewDidChange(_ textView: UITextView) {
-    sendMessageButton.isEnabled = !textView.text.isEmpty
+    sendMessageButton.isEnabled = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     if !textView.isScrollEnabled {
       textView.sizeToFit()
     }
