@@ -23,14 +23,23 @@ final class SentMessageCell: UITableViewCell {
   // Cell 내부에 기본적으로 Padding(안쪽 여백)을 주기 위한 뷰
   private let paddingContainer: UIView = UIView()
   
-  let contentLabel: UILabel = {
-    let contentLabel = PaddingLabel()
-    contentLabel.backgroundColor = .systemBlue
+  private let contentLabel: UILabel = {
+    let contentLabel = UILabel()
     contentLabel.textColor = .white
-    contentLabel.layer.cornerRadius = 10
-    contentLabel.layer.masksToBounds = true
     contentLabel.numberOfLines = 0
+    contentLabel.lineBreakMode = .byCharWrapping
     return contentLabel
+  }()
+  private lazy var contentLabelWithPadding: UIView = {
+    let paddingView = UIView()
+    paddingView.backgroundColor = .systemBlue
+    paddingView.layer.cornerRadius = 10
+    paddingView.layer.masksToBounds = true
+    paddingView.addSubview(contentLabel)
+    contentLabel.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(5)
+    }
+    return paddingView
   }()
   
   private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -42,8 +51,8 @@ final class SentMessageCell: UITableViewCell {
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
     
-    paddingContainer.addSubview(contentLabel)
-    contentLabel.snp.makeConstraints {
+    paddingContainer.addSubview(contentLabelWithPadding)
+    contentLabelWithPadding.snp.makeConstraints {
       $0.top.bottom.equalToSuperview()
       $0.trailing.equalToSuperview().inset(10)
       $0.leading.greaterThanOrEqualToSuperview().inset(50)

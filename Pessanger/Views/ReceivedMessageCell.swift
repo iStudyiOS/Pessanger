@@ -31,13 +31,22 @@ final class ReceivedMessageCell: UITableViewCell {
     return nameLabel
   }()
   
-  let contentLabel: UILabel = {
-    let contentLabel = PaddingLabel()
-    contentLabel.backgroundColor = .systemGray5
-    contentLabel.layer.cornerRadius = 10
-    contentLabel.layer.masksToBounds = true
+  private let contentLabel: UILabel = {
+    let contentLabel = UILabel()
     contentLabel.numberOfLines = 0
+    contentLabel.lineBreakMode = .byCharWrapping
     return contentLabel
+  }()
+  private lazy var contentLabelWithPadding: UIView = {
+    let paddingView = UIView()
+    paddingView.backgroundColor = .systemGray5
+    paddingView.layer.cornerRadius = 10
+    paddingView.layer.masksToBounds = true
+    paddingView.addSubview(contentLabel)
+    contentLabel.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(5)
+    }
+    return paddingView
   }()
   
   private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -59,7 +68,7 @@ final class ReceivedMessageCell: UITableViewCell {
       return stackView
     }()
     labelStackView.addArrangedSubview(nameLabel)
-    labelStackView.addArrangedSubview(contentLabel)
+    labelStackView.addArrangedSubview(contentLabelWithPadding)
     
     let stackView: UIStackView = {
       let stackView = UIStackView()
