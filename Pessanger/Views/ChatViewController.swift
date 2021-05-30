@@ -62,7 +62,11 @@ final class ChatViewController: UIViewController {
     view.alignment = .fill
     return view
   }()
-  lazy var backBarButton = UIBarButtonItem(title: "뒤로 >", style: .done, target: self, action: #selector(popToLeftBarButtonItemTapped))
+  private let backButton: UIButton = {
+    let button = UIButton()
+    button.setImage(.rightArrow, for: .normal)
+    return button
+  }()
   
   // MARK: - Initialize
   init(viewModel: ChatViewModel) {
@@ -128,10 +132,9 @@ final class ChatViewController: UIViewController {
     setUpInputTextView()
   }
   
-  fileprivate func setupNavigation() {
-    navigationController?.navigationBar.tintColor = .label
+  private func setupNavigation() {
     navigationItem.hidesBackButton = true
-    navigationItem.setRightBarButton(backBarButton, animated: false)
+    navigationItem.setRightBarButton(UIBarButtonItem(customView: backButton), animated: false)
   }
   
   private func setUpUI() {
@@ -176,6 +179,7 @@ final class ChatViewController: UIViewController {
   private func setUpListeners() {
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing))
     self.view.addGestureRecognizer(tap)
+    backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     generateDummyButton.addTarget(self, action: #selector(generateDummy), for: .touchUpInside)
     sendMessageButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
   }
@@ -185,7 +189,7 @@ final class ChatViewController: UIViewController {
   }
   
   // MARK: - Methods
-  @objc fileprivate func popToLeftBarButtonItemTapped() {
+  @objc fileprivate func backButtonTapped() {
     navigationController?.popViewControllerToLeft()
   }
   
