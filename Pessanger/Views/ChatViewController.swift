@@ -60,6 +60,7 @@ final class ChatViewController: UIViewController {
     view.axis = .vertical
     view.distribution = .fill
     view.alignment = .fill
+    view.spacing = 5
     return view
   }()
   private let backButton: UIButton = {
