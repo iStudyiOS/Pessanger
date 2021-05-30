@@ -63,8 +63,9 @@ final class ChatViewController: UIViewController {
     return view
   }()
   private let backButton: UIButton = {
-    let button = UIButton()
-    button.setImage(.rightArrow, for: .normal)
+    let button = UIButton(type: .system)
+    button.setImage(.rightArrow.withRenderingMode(.alwaysTemplate), for: .normal)
+    button.tintColor = .label
     return button
   }()
   

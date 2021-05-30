@@ -27,8 +27,9 @@ final class MessageViewController: UIViewController {
   }()
   private let searchController: UISearchController = .init()
   private let backButton: UIButton = {
-    let button = UIButton()
-    button.setImage(.rightArrow, for: .normal)
+    let button = UIButton(type: .system)
+    button.setImage(.rightArrow.withRenderingMode(.alwaysTemplate), for: .normal)
+    button.tintColor = .label
     return button
   }()
   
