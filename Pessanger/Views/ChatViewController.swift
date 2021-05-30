@@ -193,7 +193,7 @@ final class ChatViewController: UIViewController {
     let content = inputTextView.text.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !content.isEmpty else { return }
     
-    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
+    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: Date())
     viewModel.addMessage(newMessage)
     
     clearInput()

@@ -54,6 +54,14 @@ final class MessageListCell: UITableViewCell {
     return dateLabel
   }()
   
+  private let contentDateLabels: UIStackView = {
+    let contentDateLabels = UIStackView()
+    contentDateLabels.axis = .horizontal
+    contentDateLabels.distribution = .fill
+    contentDateLabels.alignment = .fill
+    return contentDateLabels
+  }()
+  
   private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     self.backgroundColor = .clear
@@ -63,16 +71,9 @@ final class MessageListCell: UITableViewCell {
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
     
-    let contentDateLabels: UIStackView = {
-      let contentDateLabels = UIStackView()
-      contentDateLabels.axis = .horizontal
-      contentDateLabels.distribution = .fill
-      contentDateLabels.alignment = .fill
-      contentDateLabels.addArrangedSubview(contentLabel)
-      contentDateLabels.addArrangedSubview(dateLabel)
-      dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-      return contentDateLabels
-    }()
+    contentDateLabels.addArrangedSubview(contentLabel)
+    contentDateLabels.addArrangedSubview(dateLabel)
+    dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     
     let labelStackView: UIStackView = {
       let labelStackView = UIStackView()
@@ -116,10 +117,15 @@ final class MessageListCell: UITableViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
-  func configure(name: String, content: String, date: Date = Date()) {
+  func configure(name: String, recentMessage: Message?) {
     nameLabel.text = name
-    contentLabel.text = content
-    dateLabel.text = date.formattedString(type: .one)
+    if let recentMessage = recentMessage {
+      contentDateLabels.isHidden = false
+      contentLabel.text = recentMessage.content
+      dateLabel.text = recentMessage.time.formattedString(type: .one)
+    } else {
+      contentDateLabels.isHidden = true
+    }
   }
   
 }
