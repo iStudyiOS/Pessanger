@@ -46,6 +46,10 @@ final class MessageViewController: UIViewController {
     super.viewDidLoad()
     setUp()
   }
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    navigationItem.hidesSearchBarWhenScrolling = true
+  }
   
   // MARK: - Setup
   private func setUp() {
@@ -59,6 +63,7 @@ final class MessageViewController: UIViewController {
     navigationItem.hidesBackButton = true
     navigationItem.setRightBarButton(UIBarButtonItem(customView: backButton), animated: false)
     navigationItem.searchController = searchController
+    navigationItem.hidesSearchBarWhenScrolling = false
   }
   
   private func setUpUI() {
