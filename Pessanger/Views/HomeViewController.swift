@@ -10,17 +10,39 @@ import SnapKit
 import MapKit
 import CoreLocation
 
-class HomeViewController: UIViewController {
+protocol HandleMapSearch {
+  func dropPinZoomIn(placemark: MKPlacemark)
+}
+
+final class HomeViewController: UIViewController, UISearchControllerDelegate {
   // MARK: UI - Button
   var chatButton = UIButton()
   var profileButton = UIButton()
+  
   var mapView = MKMapView()
   var locationManager = CLLocationManager()
-  var currentLocarion: CLLocation!
+  var currentLocation: CLLocation!
+  var resultSearchController = UISearchController()
   
+  var selectedPin: MKPlacemark? = nil
+  
+  // MARK: view-Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    // mapView
+    mapView.showsUserLocation = true
+    locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest // bettery
+    locationManager.requestWhenInUseAuthorization()
+    locationManager.startUpdatingLocation()
     
+    if CLLocationManager.locationServicesEnabled() {
+      print("location service ON.")
+    } else {
+      print("location service OFF.")
+    }
+    
+    // subviews
     self.view.addSubview(mapView)
     self.view.addSubview(chatButton)
     self.view.addSubview(profileButton)
@@ -42,10 +64,20 @@ class HomeViewController: UIViewController {
       make.size.equalTo(CGSize(width: 70, height: 70))
       make.right.equalTo(-20)
     }
+    
     // configure
-    setSearchBar()
+    setResultSearchBar()
     setChatButton()
     setProfileButton()
+    
+    // locationSearchTable
+    resultSearchController.delegate = self
+    let locationSearchTable = LocationSearchTable()
+    resultSearchController = UISearchController(searchResultsController: locationSearchTable)
+    navigationItem.searchController = resultSearchController
+    resultSearchController.searchResultsUpdater = locationSearchTable
+    locationSearchTable.mapView = mapView
+    locationSearchTable.handleMapSearchDelegate = self
   }
   
   func setChatButton() {
@@ -75,22 +107,26 @@ class HomeViewController: UIViewController {
     item.layer.shadowRadius = 5
   }
   
-  // MARK: Setting searchBar
-  func setSearchBar() {
-    let searchBar = UISearchBar()
-    searchBar.setImage(UIImage(named: "ic_search"), for: UISearchBar.Icon.search, state: .normal)
-    self.navigationController?.navigationBar.topItem?.titleView = searchBar
+  // MARK: Setting resultSearchBar
+  func setResultSearchBar() {
+    self.navigationItem.searchController = resultSearchController
+    self.navigationItem.title = "친구 찾기"
     
-    searchBar.setImage(UIImage(named: "ic_clear"), for: .clear, state: .normal)
+    let searchBar = resultSearchController.searchBar
+    
     searchBar.placeholder = "이름을 검색하세요."
     searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
-    
     searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
     searchBar.layer.shadowOpacity = 0.25
     searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
-    searchBar.layer.shadowRadius = 5
+    resultSearchController.searchBar.layer.shadowRadius = 5
     
-    if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
+    searchBar.sizeToFit()
+    resultSearchController.dimsBackgroundDuringPresentation = true
+    
+    definesPresentationContext = true
+    
+    if let textfield = resultSearchController.searchBar.value(forKey: "searchField") as? UITextField {
       textfield.backgroundColor = UIColor.white
       textfield.layer.cornerRadius = 17
       textfield.clipsToBounds = true
@@ -120,4 +156,104 @@ class HomeViewController: UIViewController {
     navigationController?.pushViewController(vc, animated: true)
   }
   
+  func searchBarTapped() {
+    let vc = LocationSearchTable()
+    navigationController?.pushViewController(vc, animated: true)
+  }
+  
+  @objc func getDirections(){
+    if let selectedPin = selectedPin {
+      let mapItem = MKMapItem(placemark: selectedPin)
+      let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+      mapItem.openInMaps(launchOptions: launchOptions)
+    }
+  }
 }
+
+// MARK: CLLocationManagerDelegate
+extension HomeViewController: CLLocationManagerDelegate {
+  func printCoordinates() {
+    if let locaton = locationManager.location?.coordinate {
+      print("location: \(locaton)")
+    }
+  }
+  func render(_ locations: CLLocation) {
+    let coordinate = CLLocationCoordinate2D(latitude: locations.coordinate.latitude, longitude: locations.coordinate.longitude)
+    printCoordinates()
+    
+    let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01) // delta 값이 1보다 작을수록 확대됨.
+    let region = MKCoordinateRegion(center: coordinate,
+                                    span: span)
+    self.mapView.setRegion(region, animated: true)
+  }
+  
+  // 업데이트 되는 위치 정보 표시.
+  func locationManager(
+    _ manager: CLLocationManager,
+    didUpdateLocations locations: [CLLocation]) {
+    currentLocation = locations.first
+    //    currentLocation = manager.location
+    guard currentLocation != nil else {
+      print("currentLocation is nil.")
+      return
+    }
+    print("got location!")
+    printCoordinates()
+    manager.stopUpdatingLocation()
+    render(currentLocation)
+  }
+  
+  func locationManager(
+    _ manager: CLLocationManager,
+    didFailWithError error: Error) {
+    print(error.localizedDescription)
+  }
+}
+
+// MARK: MKMapViewDelegate
+extension HomeViewController: MKMapViewDelegate {
+  func mapView(
+    _ mapView: MKMapView,
+    viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    if annotation is MKUserLocation {
+      //return nil so map view draws "blue dot" for standard user location
+      return nil
+    }
+    let reuseId = "pin"
+    var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+    
+    pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+    pinView?.pinTintColor = UIColor.orange
+    pinView?.canShowCallout = true
+    let smallSquare = CGSize(width: 30, height: 30)
+    
+    let button = UIButton(frame: CGRect(origin: .zero, size: smallSquare))
+    button.setBackgroundImage(UIImage(systemName: "car.fill"), for: .normal)
+    button.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
+    pinView?.leftCalloutAccessoryView = button
+    return pinView
+  }
+}
+
+// MARK: Handle Map Search
+extension HomeViewController: HandleMapSearch {
+  func dropPinZoomIn(placemark:MKPlacemark){
+    // cache the pin
+    selectedPin = placemark
+    // clear existing pins
+    mapView.removeAnnotations(mapView.annotations)
+    let annotation = MKPointAnnotation()
+    annotation.coordinate = placemark.coordinate
+    annotation.title = placemark.name
+    if let city = placemark.locality,
+       let state = placemark.administrativeArea {
+      annotation.subtitle = "\(city) \(state)"
+    }
+    mapView.addAnnotation(annotation)
+    let span = MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+    let region = MKCoordinateRegion(center: placemark.coordinate,
+                                    span: span)
+    mapView.setRegion(region, animated: true)
+  }
+}
+

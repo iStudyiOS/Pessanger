@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C266BB3265F617500EEA2EA /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C266BB2265F617500EEA2EA /* LocationSearchTable.swift */; };
+		1C266BB5265F6D3100EEA2EA /* ResultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C266BB4265F6D3100EEA2EA /* ResultTableViewCell.swift */; };
 		1CB0A0CF264926810062C22D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED2264923380062C22D /* QuartzCore.framework */; };
 		1CB0A0D0264926890062C22D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */; };
 		1CB0A0D2264926900062C22D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0A0D1264926900062C22D /* Metal.framework */; };
@@ -39,6 +41,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C266BB2265F617500EEA2EA /* LocationSearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
+		1C266BB4265F6D3100EEA2EA /* ResultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewCell.swift; sourceTree = "<group>"; };
 		1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		1CB09ED0264923320062C22D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		1CB09ED2264923380062C22D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -102,6 +106,8 @@
 				D4E1730B265A607E003ECC18 /* SentMessageCell.swift */,
 				D4E1730D265A6093003ECC18 /* ReceivedMessageCell.swift */,
 				D49DE7B226635E9500EB8B71 /* MessageListCell.swift */,
+				1C266BB2265F617500EEA2EA /* LocationSearchTable.swift */,
+				1C266BB4265F6D3100EEA2EA /* ResultTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -284,9 +290,11 @@
 				9854B41E2650FDC500CEB785 /* ProfileModel.swift in Sources */,
 				1CDBE4CD26490BE4009A923B /* MessageViewController.swift in Sources */,
 				9854B41B264FC33400CEB785 /* SettingsViewController.swift in Sources */,
+				1C266BB3265F617500EEA2EA /* LocationSearchTable.swift in Sources */,
 				D4E17306265A5EA4003ECC18 /* Dynamic.swift in Sources */,
 				1CDBE4C926490BCD009A923B /* HomeViewController.swift in Sources */,
 				D4E1730C265A607E003ECC18 /* SentMessageCell.swift in Sources */,
+				1C266BB5265F6D3100EEA2EA /* ResultTableViewCell.swift in Sources */,
 				D4E17308265A5EBC003ECC18 /* Message.swift in Sources */,
 				D4E1730A265A6064003ECC18 /* PaddingLabel.swift in Sources */,
 				D49DE7B6266377E400EB8B71 /* Date+formattedString.swift in Sources */,
