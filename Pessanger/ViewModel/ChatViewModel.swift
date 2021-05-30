@@ -19,9 +19,8 @@ final class ChatViewModel {
   private func fetchMessages() { // TODO: DB에서 메시지들 가져와야함,,
     DispatchQueue.global().async { [weak self] in
       self?.messages.value = [
-        Message(isMe: false, sender: "Elon Musk", content: "Hello", time: nil),
-        Message(isMe: false, sender: "Elon Musk", content: "Go DOGE", time: nil),
-        Message(isMe: true, sender: "Pio", content: "Hi h i", time: nil),
+        Message(isMe: false, sender: self!.opponentName.value, content: "Hello", time: Date()),
+        Message(isMe: true, sender: "Pio", content: "Hi h i", time: Date()),
       ]
     }
   }
@@ -41,7 +40,7 @@ final class ChatViewModel {
         isMe: false,
         sender: self.opponentName.value,
         content: randomContent,
-        time: nil
+        time: Date()
       )
       self.messages.value.append(randomMessage)
     }

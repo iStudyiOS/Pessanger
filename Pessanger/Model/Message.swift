@@ -11,5 +11,5 @@ struct Message {
     var isMe: Bool
     var sender: String
     var content: String
-    var time: Date?
+    var time: Date
 }

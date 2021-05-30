@@ -19,6 +19,7 @@ final class ChatViewController: UIViewController {
   
   // MARK: - Properties
   private var isInputActive: Bool = false
+  private var inputLineHeight: CGFloat = 0
   let viewModel: ChatViewModel // TODO: IOC(프로토콜로,,)
   
   // MARK: - Views
@@ -32,7 +33,8 @@ final class ChatViewController: UIViewController {
     textView.font = .preferredFont(forTextStyle: .body)
     textView.backgroundColor = .systemGray5
     textView.layer.cornerRadius = 10
-    textView.textContainerInset = .init(top: 5, left: 10, bottom: 5, right: 10)
+    textView.textContainer.lineFragmentPadding = 0
+    textView.textContainerInset = .init(top: 5, left: 5, bottom: 5, right: 5)
     textView.isScrollEnabled = false
     return textView
   }()
@@ -58,9 +60,15 @@ final class ChatViewController: UIViewController {
     view.axis = .vertical
     view.distribution = .fill
     view.alignment = .fill
+    view.spacing = 5
     return view
   }()
-  lazy var backBarButton = UIBarButtonItem(title: "뒤로 >", style: .done, target: self, action: #selector(popToLeftBarButtonItemTapped))
+  private let backButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setImage(.rightArrow.withRenderingMode(.alwaysTemplate), for: .normal)
+    button.tintColor = .label
+    return button
+  }()
   
   // MARK: - Initialize
   init(viewModel: ChatViewModel) {
@@ -126,10 +134,9 @@ final class ChatViewController: UIViewController {
     setUpInputTextView()
   }
   
-  fileprivate func setupNavigation() {
-    navigationController?.navigationBar.tintColor = .label
+  private func setupNavigation() {
     navigationItem.hidesBackButton = true
-    navigationItem.setRightBarButton(backBarButton, animated: false)
+    navigationItem.setRightBarButton(UIBarButtonItem(customView: backButton), animated: false)
   }
   
   private func setUpUI() {
@@ -137,10 +144,12 @@ final class ChatViewController: UIViewController {
     
     self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: generateDummyButton)
     
+    inputLineHeight = inputTextView.sizeThatFits(inputTextView.frame.size).height - inputTextView.textContainerInset.top - inputTextView.textContainerInset.bottom
+    
     bottomView.addSubview(inputTextView)
     bottomView.addSubview(sendMessageButton)
     sendMessageButton.snp.makeConstraints {
-      $0.height.width.equalTo(inputTextView.font!.lineHeight)
+      $0.height.width.equalTo(inputLineHeight)
       $0.top.greaterThanOrEqualToSuperview().inset(5)
       $0.bottom.equalToSuperview().inset(5 + inputTextView.textContainerInset.bottom + inputTextView.contentInset.bottom)
       $0.trailing.equalToSuperview().inset(15)
@@ -149,7 +158,8 @@ final class ChatViewController: UIViewController {
       $0.leading.equalToSuperview().inset(10)
       $0.top.bottom.equalToSuperview().inset(5)
       $0.trailing.equalTo(sendMessageButton.snp.leading).offset(-15)
-      $0.height.lessThanOrEqualTo(inputTextView.font!.lineHeight * CGFloat(Constants.maxInputLines) + inputTextView.textContainerInset.top + inputTextView.textContainerInset.bottom)
+      let maxHeight = ceil(inputLineHeight) * CGFloat(Constants.maxInputLines) + inputTextView.textContainerInset.top + inputTextView.textContainerInset.bottom
+      $0.height.lessThanOrEqualTo(maxHeight)
     }
     
     containerView.addArrangedSubview(tableView)
@@ -171,6 +181,7 @@ final class ChatViewController: UIViewController {
   private func setUpListeners() {
     let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing))
     self.view.addGestureRecognizer(tap)
+    backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     generateDummyButton.addTarget(self, action: #selector(generateDummy), for: .touchUpInside)
     sendMessageButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
   }
@@ -180,21 +191,18 @@ final class ChatViewController: UIViewController {
   }
   
   // MARK: - Methods
-  @objc fileprivate func popToLeftBarButtonItemTapped() {
+  @objc fileprivate func backButtonTapped() {
     navigationController?.popViewControllerToLeft()
   }
   
   @objc private func sendMessage() {
-    guard let content = inputTextView.text,
-          !content.isEmpty else {
-      return
-    }
+    let content = inputTextView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !content.isEmpty else { return }
     
-    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: nil)
+    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: Date())
     viewModel.addMessage(newMessage)
     
-    inputTextView.text.removeAll()
-    sendMessageButton.isEnabled = false
+    clearInput()
   }
   
   @objc private func generateDummy() { // For Tests
@@ -230,18 +238,22 @@ extension ChatViewController: UITableViewDataSource {
 extension ChatViewController: UITextViewDelegate {
   
   func textViewDidChange(_ textView: UITextView) {
-    sendMessageButton.isEnabled = !textView.text.isEmpty
-    if !textView.isScrollEnabled {
-      textView.sizeToFit()
+    sendMessageButton.isEnabled = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    
+    let currentContentSize = textView.sizeThatFits(CGSize(width: textView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+    let numberOfLines = Int((currentContentSize.height - textView.textContainerInset.top - textView.textContainerInset.bottom) / inputLineHeight)
+    
+    if numberOfLines > Constants.maxInputLines {
+      textView.isScrollEnabled = true
+    } else {
+      textView.isScrollEnabled = false
     }
-    if let lineHeight = textView.font?.lineHeight {
-      let textHeight = textView.contentSize.height - (textView.contentInset.top + textView.contentInset.bottom) - (textView.textContainerInset.top + textView.textContainerInset.bottom)
-      if Int(textHeight / lineHeight) >= Constants.maxInputLines {
-        textView.isScrollEnabled = true
-      } else {
-        textView.isScrollEnabled = false
-      }
-    }
+  }
+  
+  private func clearInput() {
+    inputTextView.isScrollEnabled = false
+    inputTextView.text.removeAll()
+    inputTextView.insertText("")
   }
   
 }

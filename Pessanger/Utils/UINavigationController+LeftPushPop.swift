@@ -1,14 +1,14 @@
 //
-//  Extensions.swift
+//  UINavigationController+LeftPushPop.swift
 //  Pessanger
 //
 //  Created by KEEN on 2021/05/16.
 //
 
-import Foundation
 import UIKit
 
 extension UINavigationController {
+  
   // viewController 왼쪽에서 오른쪽 방향으로 push하는 함수
   func pushViewControllerFromLeft(_ viewController: UIViewController) {
     let transition = CATransition()
@@ -19,6 +19,7 @@ extension UINavigationController {
     view.window!.layer.add(transition, forKey: kCATransition)
     pushViewController(viewController, animated: false)
   }
+  
   // viewController 왼쪽 방향으로 pop하는 함수
   func popViewControllerToLeft() {
     let transition = CATransition()
@@ -30,4 +31,3 @@ extension UINavigationController {
     popViewController(animated: false)
   }
 }
-

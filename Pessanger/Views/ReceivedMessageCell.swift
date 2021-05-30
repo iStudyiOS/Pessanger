@@ -11,6 +11,18 @@ final class ReceivedMessageCell: UITableViewCell {
   
   static var reuseIdentifier: String { return String(describing: Self.self) }
   
+  private enum Constants {
+    static let cellPadding: (top: Int, bottom: Int, leading: Int, trailing: Int) = (
+      top: 5,
+      bottom: 5,
+      leading: 5,
+      trailing: 5
+    )
+  }
+  
+  // Cell 내부에 기본적으로 Padding(안쪽 여백)을 주기 위한 뷰
+  private let paddingContainer: UIView = UIView()
+  
   let nameLabel: UILabel = {
     let nameLabel = PaddingLabel()
     nameLabel.text = "??"
@@ -19,13 +31,22 @@ final class ReceivedMessageCell: UITableViewCell {
     return nameLabel
   }()
   
-  let contentLabel: UILabel = {
-    let contentLabel = PaddingLabel()
-    contentLabel.backgroundColor = .systemGray5
-    contentLabel.layer.cornerRadius = 10
-    contentLabel.layer.masksToBounds = true
+  private let contentLabel: UILabel = {
+    let contentLabel = UILabel()
     contentLabel.numberOfLines = 0
+    contentLabel.lineBreakMode = .byCharWrapping
     return contentLabel
+  }()
+  private lazy var contentLabelWithPadding: UIView = {
+    let paddingView = UIView()
+    paddingView.backgroundColor = .systemGray5
+    paddingView.layer.cornerRadius = 10
+    paddingView.layer.masksToBounds = true
+    paddingView.addSubview(contentLabel)
+    contentLabel.snp.makeConstraints {
+      $0.edges.equalToSuperview().inset(5)
+    }
+    return paddingView
   }()
   
   private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -47,9 +68,9 @@ final class ReceivedMessageCell: UITableViewCell {
       return stackView
     }()
     labelStackView.addArrangedSubview(nameLabel)
-    labelStackView.addArrangedSubview(contentLabel)
+    labelStackView.addArrangedSubview(contentLabelWithPadding)
     
-    let container: UIStackView = {
+    let stackView: UIStackView = {
       let stackView = UIStackView()
       stackView.axis = .horizontal
       stackView.distribution = .fill
@@ -57,15 +78,23 @@ final class ReceivedMessageCell: UITableViewCell {
       stackView.spacing = 5
       return stackView
     }()
-    container.addArrangedSubview(imageView)
-    container.addArrangedSubview(labelStackView)
+    stackView.addArrangedSubview(imageView)
+    stackView.addArrangedSubview(labelStackView)
     imageView.snp.makeConstraints {
       $0.width.height.equalTo(30)
     }
-    self.contentView.addSubview(container)
-    container.snp.makeConstraints {
-      $0.top.bottom.leading.equalTo(self.contentView.safeAreaLayoutGuide).inset(10)
-      $0.trailing.equalTo(self.contentView.safeAreaLayoutGuide).inset(50)
+    paddingContainer.addSubview(stackView)
+    stackView.snp.makeConstraints {
+      $0.top.bottom.leading.equalToSuperview()
+      $0.trailing.equalToSuperview().inset(40)
+    }
+    
+    self.contentView.addSubview(paddingContainer)
+    paddingContainer.snp.makeConstraints {
+      $0.top.equalToSuperview().inset(Constants.cellPadding.top)
+      $0.bottom.equalToSuperview().inset(Constants.cellPadding.bottom)
+      $0.leading.equalToSuperview().inset(Constants.cellPadding.leading)
+      $0.trailing.equalToSuperview().inset(Constants.cellPadding.trailing)
     }
   }
   required init?(coder: NSCoder) {
