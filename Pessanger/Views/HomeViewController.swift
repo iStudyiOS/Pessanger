@@ -167,6 +167,14 @@ class HomeViewController: UIViewController, UISearchControllerDelegate {
     let vc = LocationSearchTable()
     navigationController?.pushViewController(vc, animated: true)
   }
+  
+  @objc func getDirections(){
+    if let selectedPin = selectedPin {
+      let mapItem = MKMapItem(placemark: selectedPin)
+      let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+      mapItem.openInMaps(launchOptions: launchOptions)
+    }
+  }
 }
 
 // MARK: CLLocationManagerDelegate
@@ -211,6 +219,27 @@ extension HomeViewController: CLLocationManagerDelegate {
 
 // MARK: MKMapViewDelegate
 extension HomeViewController: MKMapViewDelegate {
+  func mapView(
+    _ mapView: MKMapView,
+    viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    if annotation is MKUserLocation {
+      //return nil so map view draws "blue dot" for standard user location
+      return nil
+    }
+    let reuseId = "pin"
+    var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+    
+    pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+    pinView?.pinTintColor = UIColor.orange
+    pinView?.canShowCallout = true
+    let smallSquare = CGSize(width: 30, height: 30)
+    
+    let button = UIButton(frame: CGRect(origin: .zero, size: smallSquare))
+    button.setBackgroundImage(UIImage(systemName: "car.fill"), for: .normal)
+    button.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
+    pinView?.leftCalloutAccessoryView = button
+    return pinView
+  }
 }
 
 // MARK: Handle Map Search
