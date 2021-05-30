@@ -65,8 +65,6 @@ final class MessageListCell: UITableViewCell {
   private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     self.backgroundColor = .clear
-    self.selectionStyle = .none
-    
     self.layoutMargins = .zero
     self.separatorInset = .zero
     self.preservesSuperviewLayoutMargins = false
