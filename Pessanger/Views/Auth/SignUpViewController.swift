@@ -58,7 +58,7 @@ class SignUpViewController: UIViewController {
 	
 	private func goToHomeView(myInfo: UserInfo) {
 		guard let user = authController.getCurrentUser() else {
-			_ = showAlert(for: "Fail to go home, Error to get user infomation")
+			_ = showAlert(for: "사용자 정보 가져오기 실패, 재확인 필요")
 			return
 		}
 		let userController = UserController(db: authController.dbController, user: user, info: myInfo)
@@ -72,9 +72,10 @@ class SignUpViewController: UIViewController {
 	}
 	
 	private func validateFields() -> Bool {
+        
 		
 		if passwordInputs.0.text != passwordInputs.1.text {
-			return showAlert(for: "Password fields are different")
+			return showAlert(for: "비밀번호가 서로 다릅니다.")
 		}
 		
 		guard let email = emailInput.text,
@@ -82,25 +83,25 @@ class SignUpViewController: UIViewController {
 					nicknameInput.text != nil,
 					allInputs.filter({ $0.text!.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }).isEmpty // find empty text field
 		else {
-			return showAlert(for: "Please fill all text fields")
+			return showAlert(for: "모든 항목을 작성하시기 바랍니다.")
 		}
 		
 		if !authController.isValidEmail(email) {
-			return showAlert(for: "Email is not vaild")
+			return showAlert(for: "사용 가능한 이메일이 아닙니다.")
 		}
 		if !authController.isValidPassword(password) {
-			return showAlert(for: "Password is not valid")
+			return showAlert(for: "비밀번호는 8자 이상, 1개 이상의 특수문자로 설정하시기 바랍니다.")
 		}
 		return true
 	}
 	
 	private func showAlert(for message: String) -> Bool {
 		let alert = UIAlertController(
-			title: "Fail to sign up",
+			title: "회원가입 실패",
 			message: message,
 			preferredStyle: .alert)
 		alert.addAction(UIAlertAction(
-											title: "Dismiss",
+											title: "확인",
 											style: .default))
 		present(alert, animated: true)
 		return false
@@ -177,18 +178,18 @@ class SignUpViewController: UIViewController {
 			$0.autocapitalizationType = .none
 		}
 		nicknameInput.returnKeyType = .join
-		emailInput.placeholder = "Email"
+		emailInput.placeholder = "이메일"
 		emailInput.keyboardType = .emailAddress
-		passwordInputs.0.placeholder = "Password"
-		passwordInputs.1.placeholder = "Password confirm"
+		passwordInputs.0.placeholder = "비밀번호"
+		passwordInputs.1.placeholder = "비밀번호 확인"
 		passwordInputs.0.isSecureTextEntry = true
 		passwordInputs.1.isSecureTextEntry = true
-		nicknameInput.placeholder = "Nick name"
+		nicknameInput.placeholder = "닉네임"
 	}
 	
 	private func initButtons() {
-		signUpButton.setTitle("Sign up", for: .normal)
-		backButton.setTitle("Go back", for: .normal)
+		signUpButton.setTitle("회원가입", for: .normal)
+		backButton.setTitle("뒤로", for: .normal)
 		signUpButton.setTitleColor(primaryColor, for: .normal)
 		backButton.setTitleColor(secondaryColor, for: .normal)
 		signUpButton.addTarget(self,

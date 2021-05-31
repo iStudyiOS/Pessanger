@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    private let authController = AuthController(dbController: DatabaseController())
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -55,10 +58,22 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     private func signOutTapped() {
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive, handler: { _ in
+        alert.addAction(UIAlertAction(title: "로그아웃", style: .destructive, handler: { [self] _ in
             
+            do{
+                try FirebaseAuth.Auth.auth().signOut()
+                let vc = SignInViewConroller(authController: authController)
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                self.present(nav, animated: true)
+            }
+            
+            catch{
+                print("로그아웃 실패")
+            }
         } ))
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        present(alert, animated: true)
     }
     
     override func viewDidLayoutSubviews() {
