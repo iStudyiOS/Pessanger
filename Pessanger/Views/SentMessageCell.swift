@@ -73,5 +73,4 @@ final class SentMessageCell: UITableViewCell {
   func configure(_ message: Message) {
     contentLabel.text = message.content
   }
-  
 }

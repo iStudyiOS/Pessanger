@@ -8,6 +8,7 @@
 import Foundation
 
 final class ChatViewModel {
+  
   let messages: Dynamic<[Message]> = .init([])
   let opponentName: Dynamic<String> = .init("")
   

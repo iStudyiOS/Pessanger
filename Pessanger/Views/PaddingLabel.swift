@@ -39,5 +39,4 @@ final class PaddingLabel: UILabel {
     let newTextRect = super.textRect(forBounds: paddingBounds, limitedToNumberOfLines: 0)
     return newTextRect
   }
-  
 }

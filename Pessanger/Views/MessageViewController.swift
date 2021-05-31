@@ -99,7 +99,7 @@ extension MessageViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return list.count
   }
-
+  
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: MessageListCell.reuseIdentifier, for: indexPath) as? MessageListCell else {
       return UITableViewCell()
@@ -108,7 +108,7 @@ extension MessageViewController: UITableViewDataSource {
     cell.configure(name: item.opponentName.value, recentMessage: item.messages.value.first)
     return cell
   }
-
+  
 }
 
 // MARK: - Implement TableView Delegate

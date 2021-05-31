@@ -296,7 +296,7 @@ extension ChatViewController {
       $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(0)
     }
     self.tableView.contentOffset.y = max(0, self.tableView.contentOffset.y - size.cgRectValue.height)
-
+    
     self.view.layoutIfNeeded()
     UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: {
       self.view.layoutIfNeeded()
