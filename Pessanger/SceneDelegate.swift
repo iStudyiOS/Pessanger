@@ -11,17 +11,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   var window: UIWindow?
 
-  func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-    guard let scene = (scene as? UIWindowScene) else { return }
-    window = UIWindow(windowScene: scene)
-    let mainVC = HomeViewController()
-    let nav = UINavigationController(rootViewController: mainVC)
-        nav.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        nav.navigationBar.shadowImage = UIImage()
-    self.window?.rootViewController = nav
-    self.window?.makeKeyAndVisible()
-  }
-
+	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+	 guard let scene = (scene as? UIWindowScene) else { return }
+	 window = UIWindow(windowScene: scene)
+	
+	 let dbController = DatabaseController()
+	 let authController = AuthController(dbController: dbController)
+	 
+	 if authController.autoSignIn,
+			let currentUser = authController.getCurrentUser(){
+		
+		dbController.retrieve(path: .userInfo(userUid: currentUser.uid), as: UserInfo.self).observe { result in
+			if case .success(let myInfo) = result {
+				let userController = UserController(db: dbController,
+																						user: currentUser,
+																						info: myInfo)
+				let mainVC = HomeViewController(user: userController)
+				let nav = UINavigationController(rootViewController: mainVC)
+				nav.navigationBar.setBackgroundImage(UIImage(), for: .default)
+				nav.navigationBar.shadowImage = UIImage()
+				self.window?.rootViewController = nav
+				self.window?.makeKeyAndVisible()
+			}else {
+				self.goToSignIn(authController: authController)
+			}
+		}
+	 }
+	 goToSignIn(authController: authController)
+ }
+	private func goToSignIn(authController: AuthController) {
+		let signInVC = SignInViewConroller(authController: authController)
+		let signInNavigationVC = UINavigationController(rootViewController: signInVC)
+		self.window?.rootViewController = signInNavigationVC
+		self.window?.makeKeyAndVisible()
+	}
   func sceneDidDisconnect(_ scene: UIScene) {
     // Called as the scene is being released by the system.
     // This occurs shortly after the scene enters the background, or when its session is discarded.
