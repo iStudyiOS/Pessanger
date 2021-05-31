@@ -15,6 +15,7 @@ protocol HandleMapSearch {
 }
 
 final class HomeViewController: UIViewController, UISearchControllerDelegate {
+	
   // MARK: UI - Button
   var chatButton = UIButton()
   var profileButton = UIButton()
@@ -25,7 +26,20 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   var resultSearchController = UISearchController()
   
   var selectedPin: MKPlacemark? = nil
-  
+	
+	private let user: UserController
+	private var searchTableVC: LocationSearchTable!
+	private let toggleButton = UIButton()
+	
+	init(user: UserController) {
+		self.user = user
+		super.init(nibName: nil, bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
   // MARK: view-Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -46,6 +60,7 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     self.view.addSubview(mapView)
     self.view.addSubview(chatButton)
     self.view.addSubview(profileButton)
+		self.view.addSubview(toggleButton)
     
     // MARK: Constraints
     mapView.snp.makeConstraints { make in
@@ -64,11 +79,16 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
       make.size.equalTo(CGSize(width: 70, height: 70))
       make.right.equalTo(-20)
     }
-    
+		toggleButton.snp.makeConstraints { make in
+			make.top.equalTo(150)
+			make.size.equalTo(CGSize(width: 70, height: 70))
+			make.right.equalTo(-30)
+		}
     // configure
     setResultSearchBar()
     setChatButton()
     setProfileButton()
+		setToggleButton()
     
     // locationSearchTable
     resultSearchController.delegate = self
@@ -78,6 +98,10 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     resultSearchController.searchResultsUpdater = locationSearchTable
     locationSearchTable.mapView = mapView
     locationSearchTable.handleMapSearchDelegate = self
+		
+		locationSearchTable.user = user
+		searchTableVC = locationSearchTable
+		resultSearchController.searchBar.delegate = searchTableVC
   }
   
   func setChatButton() {
@@ -89,6 +113,14 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     makeShadow(chatButton)
     chatButton.addTarget(self, action: #selector(chatButtonAction), for: .touchUpInside)
   }
+	func setToggleButton() {
+		toggleButton.backgroundColor = .white
+		toggleButton.layer.cornerRadius = 70 * 0.5
+		toggleButton.clipsToBounds = true
+		toggleButton.setImage(UIImage(systemName: "arrow.triangle.2.circlepath.circle"), for: .normal)
+		makeShadow(toggleButton)
+		toggleButton.addTarget(self, action: #selector(tapToggleButton), for: .touchUpInside)
+	}
   func setProfileButton() {
     profileButton.backgroundColor = .white
     profileButton.layer.cornerRadius = 70 * 0.5
@@ -113,7 +145,6 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     self.navigationItem.title = "친구 찾기"
     
     let searchBar = resultSearchController.searchBar
-    
     searchBar.placeholder = "이름을 검색하세요."
     searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
     searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
@@ -148,6 +179,16 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     let messageVC = MessageViewController()
     navigationController?.pushViewControllerFromLeft(messageVC)
   }
+	
+	@objc private func tapToggleButton() {
+		let alert = UIAlertController(title: "검색 설정", message: "", preferredStyle: .alert)
+		LocationSearchTable.Category.allCases.forEach { category in
+			alert.addAction(UIAlertAction(title: category.koreanString, style: .default, handler: { _ in
+				self.searchTableVC.searchCategory = category
+			}))
+		}
+		present(alert, animated: true)
+	}
   
   @objc func profileButtonAction(_ sender: UIButton!) {
     let vc = SettingsViewController()
@@ -201,6 +242,7 @@ extension HomeViewController: CLLocationManagerDelegate {
     printCoordinates()
     manager.stopUpdatingLocation()
     render(currentLocation)
+		user.updateLocation(location: .init(latitude: currentLocation.coordinate.latitude, longitude: currentLocation.coordinate.longitude))
   }
   
   func locationManager(
