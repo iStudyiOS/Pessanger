@@ -157,8 +157,13 @@ extension LocationSearchTable {
     _ tableView: UITableView,
     cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
+    if traitCollection.userInterfaceStyle == .dark {
+      cell.textLabel?.textColor = .white
+      cell.detailTextLabel?.textColor = .lightGray
+    } else {
     cell.textLabel?.textColor = .black
     cell.detailTextLabel?.textColor = .lightGray
+    }
     
     if searchCategory == .map {
       let selectedItem = matchingItems[indexPath.row].placemark
