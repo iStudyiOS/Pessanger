@@ -43,18 +43,6 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   // MARK: view-Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    // mapView
-    mapView.showsUserLocation = true
-    locationManager.delegate = self
-    locationManager.desiredAccuracy = kCLLocationAccuracyBest // bettery
-    locationManager.requestWhenInUseAuthorization()
-    locationManager.startUpdatingLocation()
-    
-    if CLLocationManager.locationServicesEnabled() {
-      print("location service ON.")
-    } else {
-      print("location service OFF.")
-    }
     
     // subviews
     self.view.addSubview(mapView)
@@ -85,21 +73,43 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
       make.right.equalTo(-30)
     }
     // configure
+    setLocationManager()
     setResultSearchBar()
     setChatButton()
     setProfileButton()
-    setToggleButton()
+    setLocationSearchTable()
+  }
+  
+  // MARK: Setup
+  func setLocationManager() {
+    mapView.showsUserLocation = true
+    mapView.showsTraffic = true
+    mapView.showsBuildings = true
     
-    // locationSearchTable
+    if CLLocationManager.locationServicesEnabled() {
+      print("location service ON.")
+      locationManager.requestWhenInUseAuthorization()
+    } else {
+      print("location service OFF.")
+    }
+    
+    locationManager.delegate = self
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest // bettery
+    locationManager.startUpdatingLocation()
+  }
+  
+  func setLocationSearchTable() {
     resultSearchController.delegate = self
+    
     let locationSearchTable = LocationSearchTable()
     resultSearchController = UISearchController(searchResultsController: locationSearchTable)
     navigationItem.searchController = resultSearchController
     resultSearchController.searchResultsUpdater = locationSearchTable
+    
     locationSearchTable.mapView = mapView
     locationSearchTable.handleMapSearchDelegate = self
-    
     locationSearchTable.user = user
+    
     searchTableVC = locationSearchTable
     resultSearchController.searchBar.delegate = searchTableVC
   }
@@ -146,14 +156,12 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     
     let searchBar = resultSearchController.searchBar
     searchBar.placeholder = "이름을 검색하세요."
+    searchBar.sizeToFit()
     searchBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
     searchBar.searchTextField.layer.shadowColor = UIColor.black.cgColor
     searchBar.layer.shadowOpacity = 0.25
     searchBar.layer.shadowOffset = CGSize(width: 2, height: 2)
     resultSearchController.searchBar.layer.shadowRadius = 5
-    
-    searchBar.sizeToFit()
-    resultSearchController.dimsBackgroundDuringPresentation = true
     
     definesPresentationContext = true
     

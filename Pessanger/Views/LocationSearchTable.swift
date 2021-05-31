@@ -169,8 +169,7 @@ extension LocationSearchTable {
       let selectedItem = matchingItems[indexPath.row].placemark
       cell.textLabel?.text = selectedItem.name
       cell.detailTextLabel?.text = parseAddress(selectedItem)
-    }
-    else {
+    } else {
       let userOfCell = searchedUsers[indexPath.row]
       var cellTitle = userOfCell.nickname
       
