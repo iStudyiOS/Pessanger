@@ -66,6 +66,11 @@ class Promise<Value>: Future<Value> {
 		func reject(with error: Error) {
 				result = .failure(error)
 		}
+	static func rejected(with error: Error) -> Promise<Value> {
+		let promise = Promise<Value>()
+		promise.reject(with: error)
+		return promise
+	}
 	/**
 			Make compouned promise
 			- parameters:

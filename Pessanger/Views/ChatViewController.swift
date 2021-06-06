@@ -89,11 +89,14 @@ final class ChatViewController: UIViewController {
     super.viewWillAppear(animated)
     NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+		viewModel.unReadMessageCount = 0
+		viewModel.enterToChatRoom()
   }
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
     NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+		viewModel.leaveChatRoom()
   }
   
   // MARK: - Bind ViewModel
@@ -107,7 +110,7 @@ final class ChatViewController: UIViewController {
       
       // 백그라운드 스레드(네트워크)에서 받은 메시지를 메인 스레드에서 처리
       DispatchQueue.main.async { [weak self] in
-        guard let self = self else { return }
+        guard let self = self	else { return }
         let numberOfVisibleCells = self.tableView.numberOfRows(inSection: 0)
         let diff = messages.count - numberOfVisibleCells
         let lastIndexPath = IndexPath(row: messages.count - 1, section: 0)
@@ -115,10 +118,12 @@ final class ChatViewController: UIViewController {
         if diff > 1 {
           self.tableView.reloadData()
           self.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: true)
-        } else if diff == 1 {
-          UIView.performWithoutAnimation { [weak self] in
-            self?.tableView.insertRows(at: [lastIndexPath], with: .none)
-          }
+        } else if diff == 1{
+					// FIXME: Fatal Error
+//          UIView.performWithoutAnimation { [weak self] in
+//            self?.tableView.insertRows(at: [lastIndexPath], with: .none)
+//          }
+					self.tableView.reloadData()
           self.tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: false)
         }
       }
@@ -198,10 +203,7 @@ final class ChatViewController: UIViewController {
   @objc private func sendMessage() {
     let content = inputTextView.text.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !content.isEmpty else { return }
-    
-    let newMessage = Message(isMe: true, sender: "Pio", content: content, time: Date())
-    viewModel.addMessage(newMessage)
-    
+		viewModel.sendMessage(content: content)
     clearInput()
   }
   

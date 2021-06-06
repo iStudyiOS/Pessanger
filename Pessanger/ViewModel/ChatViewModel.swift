@@ -6,24 +6,71 @@
 //
 
 import Foundation
+import Combine
 
-final class ChatViewModel {
-  let messages: Dynamic<[Message]> = .init([])
-  let opponentName: Dynamic<String> = .init("")
-  
-  init(opponentName: String) {
-    self.opponentName.value = opponentName
-    fetchMessages()
+final class ChatViewModel: ObservableObject {
+	
+	var messages: Dynamic<[Message]> = .init([])
+	var lastMessage: Message = .init(isMe: true, sender: "", content: "", time: Date())  {
+		didSet {
+			unReadMessageCount += 1
+			objectWillChange.send()
+		}
+	}
+	var unReadMessageCount = -1
+	private(set) var opponentName: Dynamic<String>
+	private let chatRoom: ChatController.ChatRoomController
+	private var observeLastMessageCancellable: AnyCancellable?
+	private var observeNewMessagesCancellable: AnyCancellable?
+	var uid: String {
+		chatRoom.uid
+	}
+	init(opponentName: String, chatRoom: ChatController.ChatRoomController) {
+		self.opponentName = .init(opponentName)
+		self.chatRoom = chatRoom
+		startPeeking()
   }
-  
-  private func fetchMessages() { // TODO: DB에서 메시지들 가져와야함,,
-    DispatchQueue.global().async { [weak self] in
-      self?.messages.value = [
-        Message(isMe: false, sender: self!.opponentName.value, content: "Hello", time: Date()),
-        Message(isMe: true, sender: "Pio", content: "Hi h i", time: Date()),
-      ]
-    }
-  }
+	
+	func leaveChatRoom() {
+		chatRoom.disregardMessages()
+		observeNewMessagesCancellable = nil
+		messages.value = []
+	}
+	
+	func enterToChatRoom() {
+		guard let bucket = chatRoom.lastBucket else {
+			return
+		}
+		chatRoom.stareMessages(bucket: bucket)
+		observeNewMessagesCancellable = chatRoom.$newMessage.sink { [weak self] in
+			guard let strongSelf = self,
+						let data = $0 else{
+				return
+			}
+			strongSelf.messages.value.append(strongSelf.convert(data: data))
+		}
+	}
+	
+	private func startPeeking() {
+		observeLastMessageCancellable =
+			chatRoom.$lastMessage.sink(receiveValue: { [weak self] data in
+				guard let strongSelf = self else {
+					return
+				}
+				strongSelf.lastMessage = strongSelf.convert(data: data)
+			})
+	}
+	
+	func sendMessage(content: String, url: URL? = nil) {
+		_ = chatRoom.sendMessage(content, url: url)
+	}
+	
+	private func convert(data: MessageData) -> Message {
+		Message(isMe: data.senderUid == chatRoom.user.uid,
+						sender: chatRoom.findUser(uid: data.senderUid).nickname,
+						content: data.content,
+						time: data.date)
+	}
   
   func addMessage(_ newMessage: Message) {
     messages.value.append(newMessage)
@@ -45,5 +92,14 @@ final class ChatViewModel {
       self.messages.value.append(randomMessage)
     }
   }
-  
+}
+
+extension ChatViewModel: Hashable {
+	
+	static func == (lhs: ChatViewModel, rhs: ChatViewModel) -> Bool {
+		lhs.chatRoom.uid  == rhs.chatRoom.uid
+	}
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(chatRoom.uid)
+	}
 }
