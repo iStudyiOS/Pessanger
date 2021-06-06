@@ -15,6 +15,7 @@ struct ChatRoomInfo: Codable {
 	private(set) var master: UserUid
 	let uid: String
 	
+	
 	init(master: UserUid, participants: [UserUid]) {
 		self.master = master
 		self.participants = [master] + participants

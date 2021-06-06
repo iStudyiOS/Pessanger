@@ -10,26 +10,24 @@ import FirebaseFirestore
 import FirebaseAuth
 import UIKit
 
-class UserController {
+class NetworkController: DictionaryConverter {
 	
-	private let db: DatabaseController
 	let friend: FriendController
 	let chat: ChatController
 	
-	private let current: User
-	private(set) var info: UserInfo
+	fileprivate let db: DatabaseController
+	fileprivate let currentFirebaseUser: User
+	private(set) var myInfo: UserInfo
 	private(set) var profileImage: UIImage
 	private(set) var images: [UIImage]
 	
 	func updateLocation(location: UserInfo.Location) {
-		guard location != info.lastLocation else {
+		guard location != myInfo.lastLocation else {
 			return
 		}
 		do {
-			let location = try db.toDictionary(location)
-			db.updateValue(location, path: .location(userUid: info.uid)).observe { result in
-				print(result)
-			}
+			let location = try toDictionary(location)
+			_ = db.updateValue(location, path: .location(userUid: myInfo.uid))
 		}
 		catch {
 			print("Fail to convert location")
@@ -37,11 +35,11 @@ class UserController {
 	}
 	
 	private func loadProfileImage() {
-		if let data = getDataInDevice(serverUrl: info.profileImageUrl!),
+		if let data = getDataInDevice(serverUrl: myInfo.profileImageUrl!),
 			 let storedImage = UIImage(data: data){
 			self.profileImage = storedImage
 		}else {
-			let promise = downloadData(url: info.profileImageUrl!, storeInDevice: true)
+			let promise = downloadData(url: myInfo.profileImageUrl!, storeInDevice: true)
 			promise.observe { [weak weakSelf = self ] result in
 				if case .success(let data) = result,
 					 let image = UIImage(data: data) {
@@ -53,17 +51,17 @@ class UserController {
 		}
 	}
 	
-	private func observeMyInfo() {
+	fileprivate func observeMyInfo() {
 		let observer: ([String: Any]?, Error?) -> Void = {[weak weakSelf = self] info, error in
 			if let newInfo = info,
 				 error == nil {
 				weakSelf?.distributeNewInfo(newInfo: newInfo)
 			}
 		}
-		db.addListener(path: .userInfo(userUid: info.uid), handler: observer)
+		db.attachListener(path: .userInfo(userUid: myInfo.uid), handler: observer)
 	}
 	
-	private func distributeNewInfo(newInfo: [String: Any]) {
+	fileprivate func distributeNewInfo(newInfo: [String: Any]) {
 		FriendController.ListKey.allCases.forEach { key in
 			if let newUids = newInfo[key.rawValue] as? [String]
 				{
@@ -76,12 +74,15 @@ class UserController {
 	}
 	
 	init(db: DatabaseController, user: User, info: UserInfo) {
-		self.current = user
+		self.currentFirebaseUser = user
 		self.db = db
-		self.info = info
+		self.myInfo = info
 		self.images = []
-		self.friend = FriendController(db: db, userUid: info.uid)
-		self.chat = ChatController(db: db, userUid: info.uid)
+		let friendController = FriendController(db: db, userUid: info.uid)
+		self.friend = friendController
+		self.chat = ChatController(db: db, user: info, referFriends: {
+			friendController.infoLists[.friends]!
+		})
 		if info.profileImageUrl != nil {
 			self.profileImage = UIImage()
 			loadProfileImage()
@@ -92,7 +93,7 @@ class UserController {
 	}
 }
 
-extension UserController: DataTransfer {
+extension NetworkController: DataTransfer {
 	
 	func getUploadPath(folder: Folder, fileUid: String) -> String {
 		"\(folder.rawValue)/\(fileUid)"

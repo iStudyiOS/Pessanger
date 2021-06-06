@@ -19,20 +19,18 @@ class LocationSearchTable: UITableViewController {
   var mapView: MKMapView? = nil
 	
 	// Search User
-	var user: UserController!
+	var user: NetworkController!
 	var observeFriendCancellable: AnyCancellable?
 	private var searchUserRequest: Promise<[UserInfo]>? {
 		didSet {
 			oldValue?.reject(with: "Not required")
-			searchUserRequest?.observe { [weak self] result in
-				if let strongSelf = self,
-					 case .success(var users) = result {
-					users.removeAll {
-						$0 == strongSelf.user.info
-					}
-					strongSelf.searchedUsers = users
+			_ = searchUserRequest?.transFormed(with: {  [weak self] users in
+				if let strongSelf = self {
+					strongSelf.searchedUsers = users.filter({
+						$0 != strongSelf.user.myInfo
+					})
 				}
-			}
+			})
 		}
 	}
 	private var searchedUsers = [UserInfo]() {
@@ -194,13 +192,35 @@ extension LocationSearchTable {
 			handleMapSearchDelegate?.dropPinZoomIn(placemark: selectedItem)
 			dismiss(animated: true, completion: nil)
 		case .friend:
-			guard let userLocation = searchedUsers[indexPath.row].lastLocation else {
-				print("Location for \(searchedUsers[indexPath.row].nickname) is not available")
-				return
+			let selectedFriend = searchedUsers[indexPath.row]
+			
+			let alert = UIAlertController(title: selectedFriend.nickname, message: nil, preferredStyle: .actionSheet)
+			alert.addAction(UIAlertAction(title: "채팅 하기", style: .default, handler: { [self] _ in
+				_ = user.chat.openChatRoom(with: [selectedFriend]).transFormed { newChatRoom in
+					guard let chatRoom = user.chat.chatRoomEntered[newChatRoom] else {
+						assertionFailure("Chat controller is not created")
+						return
+					}
+					let names = chatRoom.excludeMe.compactMap {
+						$0.nickname
+					}
+					DispatchQueue.main.async { [self] in
+						let messageVC = MessageViewController(user: user)
+						let chatVC = ChatViewController(viewModel: ChatViewModel(opponentName: names.joined(separator: ", "), chatRoom: chatRoom))
+						presentingViewController?.navigationController?.pushViewController(messageVC, animated: false)
+						presentingViewController?.navigationController?.pushViewControllerFromLeft(chatVC)
+					}
+				}
+			}))
+			if let userLocation = searchedUsers[indexPath.row].lastLocation {
+				alert.addAction(UIAlertAction(title: "위치 보기", style: .default, handler: { [self] _ in
+					let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude))
+					handleMapSearchDelegate?.dropPinZoomIn(placemark: placemark)
+					dismiss(animated: true)
+				}))
+				present(alert, animated: true)
 			}
-			let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude))
-			handleMapSearchDelegate?.dropPinZoomIn(placemark: placemark)
-			dismiss(animated: true)
+			
 		case .user:
 			let userSelected = searchedUsers[indexPath.row]
 			guard !user.friend.infoLists[.friends]!.contains(userSelected),
@@ -213,23 +233,9 @@ extension LocationSearchTable {
 																		message: isReceieved ? "친구 요청 수락하기" : "친구 요청 보내기", preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [self] _ in
 				if isReceieved {
-					user.friend.addToFriend(userSelected)
-						.observe { result in
-						if case .failure(let error) = result {
-							 print("Fail to Add friend \(error.localizedDescription)")
-						 }else {
-							 print("\(userSelected.nickname) is added to friend")
-						 }
-					 }
+					_ = user.friend.addToFriend(userSelected)
 				}else {
-					user.friend.sendRequest(to: userSelected)
-						.observe { result in
-							if case .failure(let error) = result {
-								print("Fail to send request \(error.localizedDescription)")
-							}else {
-								print("Request is sent to \(userSelected.nickname)")
-							}
-						}
+					_ = user.friend.sendRequest(to: userSelected)
 				}
 			}))
 			alert.addAction(UIAlertAction(title: "취소", style: .cancel))

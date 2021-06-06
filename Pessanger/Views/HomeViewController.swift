@@ -27,11 +27,11 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   
   var selectedPin: MKPlacemark? = nil
 	
-	private let user: UserController
+	private let user: NetworkController
 	private var searchTableVC: LocationSearchTable!
 	private let toggleButton = UIButton()
 	
-	init(user: UserController) {
+	init(user: NetworkController) {
 		self.user = user
 		super.init(nibName: nil, bundle: nil)
 	}
@@ -176,7 +176,7 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   
   // MARK: Button Action
   @objc func chatButtonAction(_ sender: UIButton!) {
-    let messageVC = MessageViewController()
+		let messageVC = MessageViewController(user: user)
     navigationController?.pushViewControllerFromLeft(messageVC)
   }
 	

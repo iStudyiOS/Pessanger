@@ -61,7 +61,7 @@ class SignUpViewController: UIViewController {
 			_ = showAlert(for: "Fail to go home, Error to get user infomation")
 			return
 		}
-		let userController = UserController(db: authController.dbController, user: user, info: myInfo)
+		let userController = NetworkController(db: authController.dbController, user: user, info: myInfo)
 		let homeVC = HomeViewController(user: userController)
 		let nav = UINavigationController(rootViewController: homeVC)
 		nav.navigationBar.setBackgroundImage(UIImage(), for: .default)

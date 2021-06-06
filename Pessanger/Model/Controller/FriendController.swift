@@ -44,13 +44,9 @@ class FriendController: ObservableObject {
 					infoLists[key] = []
 					return
 				}
-			 db.retrieveObjects(uidList: uids, path: .userInfo(userUid: uids.first!), as: [UserInfo].self).observe { result in
-				 if case .success(let infos) = result {
+				_ = db.retrieveObjects(uidList: uids, path: .userInfo(userUid: uids.first!), as: [UserInfo].self).transFormed { infos in
 					infoLists[key] = infos
-				 }else {
-					print("Fail to get user info for \(key.rawValue) \n \(uids)")
-				 }
-			 }
+				}
 		 }
 		}
 	}
