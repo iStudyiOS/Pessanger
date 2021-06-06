@@ -33,6 +33,13 @@ struct UserInfo: Codable {
 		self.lastLocation = nil
 	}
 	
+	static let systemUid = "system"
+	static var missing: UserInfo {
+		UserInfo(nickname: "Missing user", uid: systemUid)
+	}
+	static var system: UserInfo {
+		UserInfo(nickname: "system", uid: systemUid)
+	}
 }
 
 extension UserInfo: Equatable {

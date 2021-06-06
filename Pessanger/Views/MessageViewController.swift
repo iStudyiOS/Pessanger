@@ -7,18 +7,19 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 final class MessageViewController: UIViewController {
   
+	private let user: NetworkController
+	private var observeChatRoomCancellable: AnyCancellable?
+	
   // MARK: - Properties
-  let list: [ChatViewModel] = [
-    ChatViewModel(opponentName: "Elon Musk"),
-    ChatViewModel(opponentName: "Naver"),
-    ChatViewModel(opponentName: "Kakao"),
-    ChatViewModel(opponentName: "Mama"),
-    ChatViewModel(opponentName: "Papa"),
-  ]
-  
+	private var modelWithObservers: [ChatViewModel: AnyCancellable] = [:]
+	private var list: [ChatViewModel] {
+		Array(modelWithObservers.keys)
+	}
+	
   // MARK: - Views
   private let tableView: UITableView = {
     let tableView = UITableView()
@@ -34,8 +35,10 @@ final class MessageViewController: UIViewController {
   }()
   
   // MARK: - Initialize
-  init() {
+	init(user: NetworkController) {
+		self.user = user
     super.init(nibName: nil, bundle: nil)
+		
   }
   required init?(coder: NSCoder) {
     fatalError("Only initializable by code.")
@@ -50,6 +53,17 @@ final class MessageViewController: UIViewController {
     super.viewDidAppear(animated)
     navigationItem.hidesSearchBarWhenScrolling = true
   }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		observeChatRooms()
+		tableView.reloadData()
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		observeChatRoomCancellable = nil
+	}
   
   // MARK: - Setup
   private func setUp() {
@@ -91,6 +105,43 @@ final class MessageViewController: UIViewController {
     self.navigationController?.popViewControllerToLeft()
   }
   
+	fileprivate func observeChatRooms() {
+		observeChatRoomCancellable = user.chat.$chatRoomEntered.sink { [weak self] chatRooms in
+			guard let strongSelf = self else {
+				return
+			}
+			let currentChatRooms = strongSelf.modelWithObservers.keys
+			let newChatRooms = chatRooms.filter { dict in
+				!currentChatRooms.contains(where: {
+					$0.uid == dict.key
+				})
+			}.values.compactMap { chatRoom -> ChatViewModel in
+				let othersName = chatRoom.excludeMe.compactMap {
+					$0.nickname
+				}
+				 return ChatViewModel(opponentName: othersName.joined(separator: ", "), chatRoom: chatRoom)
+			}
+			
+			let closedChatRooms = currentChatRooms.filter { chatRoom in
+				!chatRooms.keys.contains(where: {
+					$0 == chatRoom.uid
+				})
+			}
+			closedChatRooms.forEach {
+				strongSelf.modelWithObservers[$0] = nil
+			}
+			newChatRooms.forEach { item in
+				strongSelf.modelWithObservers[item] = item.objectWillChange.sink {
+					guard let index = strongSelf.list.firstIndex(of: item) else {
+						return
+					}
+					DispatchQueue.main.async{
+						strongSelf.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+					}
+				}
+			}
+		}
+	}
 }
 
 // MARK: - Implement TableView DataSource
@@ -105,7 +156,8 @@ extension MessageViewController: UITableViewDataSource {
       return UITableViewCell()
     }
     let item = list[indexPath.row]
-    cell.configure(name: item.opponentName.value, recentMessage: item.messages.value.first)
+		let unRead = item.unReadMessageCount > 0 ? "(\(item.unReadMessageCount))": ""
+		cell.configure(name: "\(item.opponentName.value) \(unRead)", recentMessage: item.lastMessage)
     return cell
   }
 

@@ -4,35 +4,31 @@
 //
 //  Created by KEEN on 2021/05/27.
 //
-
 // TODO: HomeVC에서와 동일한 코드. 나중에 리팩토링
-
 import UIKit
 import MapKit
 import Combine
 
 class LocationSearchTable: UITableViewController {
-  var handleMapSearchDelegate: HandleMapSearch? = nil
-  
+	var handleMapSearchDelegate: HandleMapSearch? = nil
+	
 
-  var matchingItems: [MKMapItem] = []
-  var mapView: MKMapView? = nil
+	var matchingItems: [MKMapItem] = []
+	var mapView: MKMapView? = nil
 	
 	// Search User
-	var user: UserController!
+	var user: NetworkController!
 	var observeFriendCancellable: AnyCancellable?
 	private var searchUserRequest: Promise<[UserInfo]>? {
 		didSet {
 			oldValue?.reject(with: "Not required")
-			searchUserRequest?.observe { [weak self] result in
-				if let strongSelf = self,
-					 case .success(var users) = result {
-					users.removeAll {
-						$0 == strongSelf.user.info
-					}
-					strongSelf.searchedUsers = users
+			_ = searchUserRequest?.transFormed(with: {  [weak self] users in
+				if let strongSelf = self {
+					strongSelf.searchedUsers = users.filter({
+						$0 != strongSelf.user.myInfo
+					})
 				}
-			}
+			})
 		}
 	}
 	private var searchedUsers = [UserInfo]() {
@@ -50,22 +46,23 @@ class LocationSearchTable: UITableViewController {
 			tableView.reloadData()
 		}
 	}
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-    let viewController = LocationSearchTable()
-    let nav = UINavigationController(rootViewController: viewController)
-    self.navigationController?.present(nav, animated: true, completion: nil)
-    
-    tableView.delegate = self
-    tableView.dataSource = self
-    tableView.register(ResultTableViewCell.self, forCellReuseIdentifier: "resultCell")
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		let viewController = LocationSearchTable()
+		let nav = UINavigationController(rootViewController: viewController)
+		self.navigationController?.present(nav, animated: true, completion: nil)
+		
+		tableView.delegate = self
+		tableView.dataSource = self
+		tableView.register(ResultTableViewCell.self, forCellReuseIdentifier: "resultCell")
 		observeFriendCancellable = user.friend.objectWillChange.sink(receiveValue: { [weak weakSelf = self] in
 			if weakSelf?.searchCategory != .map {
 				weakSelf?.tableView.reloadData()
 			}
 		})
+<<<<<<< HEAD
   }
   
   // MARK: Parsing Address
@@ -93,6 +90,37 @@ class LocationSearchTable: UITableViewController {
     )
     return addressLine
   }
+=======
+//    tableView.rowHeight = UITableView.automaticDimension
+//    tableView.estimatedRowHeight = UITableView.automaticDimension
+	}
+	
+	// MARK: Parsing Address
+	func parseAddress(_ selectedItem:MKPlacemark) -> String {
+		// 주소 띄어쓰기 관련 설정
+		// 도시 이름 띄어쓰기
+		let firstSpace = (selectedItem.locality != nil && selectedItem.administrativeArea != nil) ? " " : ""
+		let secondSpace = (selectedItem.subThoroughfare != nil && selectedItem.thoroughfare != nil) ? " " : ""
+		// 번가,도시 사이 컴마 찍기
+		let comma = (selectedItem.subThoroughfare != nil || selectedItem.thoroughfare != nil) && (selectedItem.subAdministrativeArea != nil || selectedItem.administrativeArea != nil) ? ", " : ""
+		
+		let addressLine = String( // 시 구 동, 지번
+			format:"%@%@%@%@%@%@%@",
+			// 시
+			selectedItem.administrativeArea ?? "",
+			firstSpace,
+			// 구
+			selectedItem.locality ?? "",
+			secondSpace,
+			// 동
+			selectedItem.thoroughfare ?? "",
+			comma,
+			// 지번
+			selectedItem.subThoroughfare ?? ""
+		)
+		return addressLine
+	}
+>>>>>>> cf2a02586c5264d4ee4c55f3e3ce20e06e0a216e
 	
 	enum Category: CaseIterable {
 		case map
@@ -114,9 +142,9 @@ class LocationSearchTable: UITableViewController {
 
 // MARK: UISearchResultsUpdating
 extension LocationSearchTable: UISearchResultsUpdating {
-  func updateSearchResults(for searchController: UISearchController) {
-    guard let mapView = mapView,
-          let searchBarText = searchController.searchBar.text else { return }
+	func updateSearchResults(for searchController: UISearchController) {
+		guard let mapView = mapView,
+					let searchBarText = searchController.searchBar.text else { return }
 		switch searchCategory {
 		case .map:
 			let request = MKLocalSearch.Request()
@@ -142,20 +170,20 @@ extension LocationSearchTable: UISearchResultsUpdating {
 
 // MARK: TableViewDelegate
 extension LocationSearchTable {
-  override func tableView(
-    _ tableView: UITableView,
-   numberOfRowsInSection section: Int) -> Int {
+	override func tableView(
+		_ tableView: UITableView,
+	 numberOfRowsInSection section: Int) -> Int {
 		if searchCategory == .map {
 			return matchingItems.count
 		}else {
 			return searchedUsers.count
 		}
-  }
+	}
 
-  override func tableView(
-    _ tableView: UITableView,
-    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
+	override func tableView(
+		_ tableView: UITableView,
+		cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as! ResultTableViewCell
 		cell.textLabel?.textColor = .black
 		cell.detailTextLabel?.textColor = .lightGray
 		
@@ -178,8 +206,8 @@ extension LocationSearchTable {
 			cell.textLabel?.text = cellTitle
 			cell.detailTextLabel?.text = "마지막 로그인 \(userOfCell.lastActivated)"
 		}
-    return cell
-  }
+		return cell
+	}
 }
 
 // MARK: HandleMapSearchDelegate
@@ -192,13 +220,35 @@ extension LocationSearchTable {
 			handleMapSearchDelegate?.dropPinZoomIn(placemark: selectedItem)
 			dismiss(animated: true, completion: nil)
 		case .friend:
-			guard let userLocation = searchedUsers[indexPath.row].lastLocation else {
-				print("Location for \(searchedUsers[indexPath.row].nickname) is not available")
-				return
+			let selectedFriend = searchedUsers[indexPath.row]
+			
+			let alert = UIAlertController(title: selectedFriend.nickname, message: nil, preferredStyle: .actionSheet)
+			alert.addAction(UIAlertAction(title: "채팅 하기", style: .default, handler: { [self] _ in
+				_ = user.chat.openChatRoom(with: [selectedFriend]).transFormed { newChatRoom in
+					guard let chatRoom = user.chat.chatRoomEntered[newChatRoom] else {
+						assertionFailure("Chat controller is not created")
+						return
+					}
+					let names = chatRoom.excludeMe.compactMap {
+						$0.nickname
+					}
+					DispatchQueue.main.async { [self] in
+						let messageVC = MessageViewController(user: user)
+						let chatVC = ChatViewController(viewModel: ChatViewModel(opponentName: names.joined(separator: ", "), chatRoom: chatRoom))
+						presentingViewController?.navigationController?.pushViewController(messageVC, animated: false)
+						presentingViewController?.navigationController?.pushViewControllerFromLeft(chatVC)
+					}
+				}
+			}))
+			if let userLocation = searchedUsers[indexPath.row].lastLocation {
+				alert.addAction(UIAlertAction(title: "위치 보기", style: .default, handler: { [self] _ in
+					let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude))
+					handleMapSearchDelegate?.dropPinZoomIn(placemark: placemark)
+					dismiss(animated: true)
+				}))
+				present(alert, animated: true)
 			}
-			let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude))
-			handleMapSearchDelegate?.dropPinZoomIn(placemark: placemark)
-			dismiss(animated: true)
+			
 		case .user:
 			let userSelected = searchedUsers[indexPath.row]
 			guard !user.friend.infoLists[.friends]!.contains(userSelected),
@@ -211,23 +261,9 @@ extension LocationSearchTable {
 																		message: isReceieved ? "친구 요청 수락하기" : "친구 요청 보내기", preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [self] _ in
 				if isReceieved {
-					user.friend.addToFriend(userSelected)
-						.observe { result in
-						if case .failure(let error) = result {
-							 print("Fail to Add friend \(error.localizedDescription)")
-						 }else {
-							 print("\(userSelected.nickname) is added to friend")
-						 }
-					 }
+					_ = user.friend.addToFriend(userSelected)
 				}else {
-					user.friend.sendRequest(to: userSelected)
-						.observe { result in
-							if case .failure(let error) = result {
-								print("Fail to send request \(error.localizedDescription)")
-							}else {
-								print("Request is sent to \(userSelected.nickname)")
-							}
-						}
+					_ = user.friend.sendRequest(to: userSelected)
 				}
 			}))
 			alert.addAction(UIAlertAction(title: "취소", style: .cancel))

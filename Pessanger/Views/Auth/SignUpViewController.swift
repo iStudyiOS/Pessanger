@@ -4,7 +4,6 @@
 //
 //  Created by bart Shin on 20/05/2021.
 //
-
 import UIKit
 
 class SignUpViewController: UIViewController {
@@ -61,7 +60,7 @@ class SignUpViewController: UIViewController {
 			_ = showAlert(for: "사용자 정보 가져오기 실패, 재확인 필요")
 			return
 		}
-		let userController = UserController(db: authController.dbController, user: user, info: myInfo)
+		let userController = NetworkController(db: authController.dbController, user: user, info: myInfo)
 		let homeVC = HomeViewController(user: userController)
 		let nav = UINavigationController(rootViewController: homeVC)
 		nav.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -72,7 +71,7 @@ class SignUpViewController: UIViewController {
 	}
 	
 	private func validateFields() -> Bool {
-        
+				
 		
 		if passwordInputs.0.text != passwordInputs.1.text {
 			return showAlert(for: "비밀번호가 서로 다릅니다.")
