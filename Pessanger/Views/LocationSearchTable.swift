@@ -19,11 +19,16 @@ class LocationSearchTable: UITableViewController {
   var mapView: MKMapView? = nil
 	
 	// Search User
+<<<<<<< HEAD
 	var user: NetworkController!
+=======
+	var user: UserController!
+>>>>>>> main
 	var observeFriendCancellable: AnyCancellable?
 	private var searchUserRequest: Promise<[UserInfo]>? {
 		didSet {
 			oldValue?.reject(with: "Not required")
+<<<<<<< HEAD
 			_ = searchUserRequest?.transFormed(with: {  [weak self] users in
 				if let strongSelf = self {
 					strongSelf.searchedUsers = users.filter({
@@ -31,6 +36,17 @@ class LocationSearchTable: UITableViewController {
 					})
 				}
 			})
+=======
+			searchUserRequest?.observe { [weak self] result in
+				if let strongSelf = self,
+					 case .success(var users) = result {
+					users.removeAll {
+						$0 == strongSelf.user.info
+					}
+					strongSelf.searchedUsers = users
+				}
+			}
+>>>>>>> main
 		}
 	}
 	private var searchedUsers = [UserInfo]() {
@@ -192,6 +208,7 @@ extension LocationSearchTable {
 			handleMapSearchDelegate?.dropPinZoomIn(placemark: selectedItem)
 			dismiss(animated: true, completion: nil)
 		case .friend:
+<<<<<<< HEAD
 			let selectedFriend = searchedUsers[indexPath.row]
 			
 			let alert = UIAlertController(title: selectedFriend.nickname, message: nil, preferredStyle: .actionSheet)
@@ -221,6 +238,15 @@ extension LocationSearchTable {
 				present(alert, animated: true)
 			}
 			
+=======
+			guard let userLocation = searchedUsers[indexPath.row].lastLocation else {
+				print("Location for \(searchedUsers[indexPath.row].nickname) is not available")
+				return
+			}
+			let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: userLocation.latitude, longitude: userLocation.longitude))
+			handleMapSearchDelegate?.dropPinZoomIn(placemark: placemark)
+			dismiss(animated: true)
+>>>>>>> main
 		case .user:
 			let userSelected = searchedUsers[indexPath.row]
 			guard !user.friend.infoLists[.friends]!.contains(userSelected),
@@ -233,9 +259,29 @@ extension LocationSearchTable {
 																		message: isReceieved ? "친구 요청 수락하기" : "친구 요청 보내기", preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [self] _ in
 				if isReceieved {
+<<<<<<< HEAD
 					_ = user.friend.addToFriend(userSelected)
 				}else {
 					_ = user.friend.sendRequest(to: userSelected)
+=======
+					user.friend.addToFriend(userSelected)
+						.observe { result in
+						if case .failure(let error) = result {
+							 print("Fail to Add friend \(error.localizedDescription)")
+						 }else {
+							 print("\(userSelected.nickname) is added to friend")
+						 }
+					 }
+				}else {
+					user.friend.sendRequest(to: userSelected)
+						.observe { result in
+							if case .failure(let error) = result {
+								print("Fail to send request \(error.localizedDescription)")
+							}else {
+								print("Request is sent to \(userSelected.nickname)")
+							}
+						}
+>>>>>>> main
 				}
 			}))
 			alert.addAction(UIAlertAction(title: "취소", style: .cancel))

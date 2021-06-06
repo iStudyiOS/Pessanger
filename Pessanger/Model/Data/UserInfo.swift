@@ -32,6 +32,7 @@ struct UserInfo: Codable {
 		self.lastActivated = Date()
 		self.lastLocation = nil
 	}
+<<<<<<< HEAD
 	static let systemUid = "system"
 	static var missing: UserInfo {
 		UserInfo(nickname: "Missing user", uid: systemUid)
@@ -39,6 +40,9 @@ struct UserInfo: Codable {
 	static var system: UserInfo {
 		UserInfo(nickname: "system", uid: systemUid)
 	}
+=======
+	
+>>>>>>> main
 }
 
 extension UserInfo: Equatable {

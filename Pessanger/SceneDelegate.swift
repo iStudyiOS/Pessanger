@@ -23,7 +23,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		dbController.retrieve(path: .userInfo(userUid: currentUser.uid), as: UserInfo.self).observe { result in
 			if case .success(let myInfo) = result {
+<<<<<<< HEAD
 				let userController = NetworkController(db: dbController,
+=======
+				let userController = UserController(db: dbController,
+>>>>>>> main
 																						user: currentUser,
 																						info: myInfo)
 				let mainVC = HomeViewController(user: userController)

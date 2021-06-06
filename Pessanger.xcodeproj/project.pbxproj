@@ -41,13 +41,20 @@
 		8910E4E52663B68D008CFAAE /* DatabaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4DD2663B68D008CFAAE /* DatabaseController.swift */; };
 		8910E4E62663B68D008CFAAE /* FriendController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4DE2663B68D008CFAAE /* FriendController.swift */; };
 		8910E4E72663B68D008CFAAE /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4DF2663B68D008CFAAE /* AuthController.swift */; };
+<<<<<<< HEAD
 		8910E4E82663B68D008CFAAE /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4E02663B68D008CFAAE /* NetworkController.swift */; };
+=======
+		8910E4E82663B68D008CFAAE /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4E02663B68D008CFAAE /* UserController.swift */; };
+>>>>>>> main
 		8910E4E92663B68D008CFAAE /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4E22663B68D008CFAAE /* UserInfo.swift */; };
 		8910E4EA2663B68D008CFAAE /* ChatRoomInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4E32663B68D008CFAAE /* ChatRoomInfo.swift */; };
 		8910E4EE2663B6A6008CFAAE /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4EC2663B6A6008CFAAE /* SignUpViewController.swift */; };
 		8910E4EF2663B6A6008CFAAE /* SignInViewConroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8910E4ED2663B6A6008CFAAE /* SignInViewConroller.swift */; };
+<<<<<<< HEAD
 		89AD568E2665E87100D8FD9F /* MessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89AD568D2665E87100D8FD9F /* MessageData.swift */; };
 		89C4BE152668918F006BB620 /* DictionaryConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C4BE142668918F006BB620 /* DictionaryConverter.swift */; };
+=======
+>>>>>>> main
 		9854B41B264FC33400CEB785 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41A264FC33400CEB785 /* SettingsViewController.swift */; };
 		9854B41E2650FDC500CEB785 /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41D2650FDC500CEB785 /* ProfileModel.swift */; };
 		9854B4202651008500CEB785 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9854B41F2651008500CEB785 /* ProfileViewController.swift */; };
@@ -94,13 +101,20 @@
 		8910E4DD2663B68D008CFAAE /* DatabaseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseController.swift; sourceTree = "<group>"; };
 		8910E4DE2663B68D008CFAAE /* FriendController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendController.swift; sourceTree = "<group>"; };
 		8910E4DF2663B68D008CFAAE /* AuthController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		8910E4E02663B68D008CFAAE /* NetworkController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
+=======
+		8910E4E02663B68D008CFAAE /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
+>>>>>>> main
 		8910E4E22663B68D008CFAAE /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		8910E4E32663B68D008CFAAE /* ChatRoomInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatRoomInfo.swift; sourceTree = "<group>"; };
 		8910E4EC2663B6A6008CFAAE /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		8910E4ED2663B6A6008CFAAE /* SignInViewConroller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewConroller.swift; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		89AD568D2665E87100D8FD9F /* MessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageData.swift; sourceTree = "<group>"; };
 		89C4BE142668918F006BB620 /* DictionaryConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryConverter.swift; sourceTree = "<group>"; };
+=======
+>>>>>>> main
 		9854B41A264FC33400CEB785 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		9854B41D2650FDC500CEB785 /* ProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
 		9854B41F2651008500CEB785 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -218,7 +232,10 @@
 			isa = PBXGroup;
 			children = (
 				8910E4CA2663B667008CFAAE /* FileManager.swift */,
+<<<<<<< HEAD
 				89C4BE142668918F006BB620 /* DictionaryConverter.swift */,
+=======
+>>>>>>> main
 				8910E4CB2663B667008CFAAE /* UrlExtension.swift */,
 				8910E4CD2663B667008CFAAE /* LocationService.swift */,
 			);
@@ -232,7 +249,11 @@
 				8910E4DD2663B68D008CFAAE /* DatabaseController.swift */,
 				8910E4DE2663B68D008CFAAE /* FriendController.swift */,
 				8910E4DF2663B68D008CFAAE /* AuthController.swift */,
+<<<<<<< HEAD
 				8910E4E02663B68D008CFAAE /* NetworkController.swift */,
+=======
+				8910E4E02663B68D008CFAAE /* UserController.swift */,
+>>>>>>> main
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -242,7 +263,10 @@
 			children = (
 				8910E4E22663B68D008CFAAE /* UserInfo.swift */,
 				8910E4E32663B68D008CFAAE /* ChatRoomInfo.swift */,
+<<<<<<< HEAD
 				89AD568D2665E87100D8FD9F /* MessageData.swift */,
+=======
+>>>>>>> main
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -375,7 +399,11 @@
 				D4E1730E265A6093003ECC18 /* ReceivedMessageCell.swift in Sources */,
 				8910E4D72663B66A008CFAAE /* Future&Promise.swift in Sources */,
 				D49DE7B326635E9500EB8B71 /* MessageListCell.swift in Sources */,
+<<<<<<< HEAD
 				8910E4E82663B68D008CFAAE /* NetworkController.swift in Sources */,
+=======
+				8910E4E82663B68D008CFAAE /* UserController.swift in Sources */,
+>>>>>>> main
 				1CFAFF6C2650D72F00F8D1D5 /* UINavigationController+LeftPushPop.swift in Sources */,
 				8910E4EE2663B6A6008CFAAE /* SignUpViewController.swift in Sources */,
 				8910E4EF2663B6A6008CFAAE /* SignInViewConroller.swift in Sources */,

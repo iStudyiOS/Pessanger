@@ -27,11 +27,19 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   
   var selectedPin: MKPlacemark? = nil
 	
+<<<<<<< HEAD
 	private let user: NetworkController
 	private var searchTableVC: LocationSearchTable!
 	private let toggleButton = UIButton()
 	
 	init(user: NetworkController) {
+=======
+	private let user: UserController
+	private var searchTableVC: LocationSearchTable!
+	private let toggleButton = UIButton()
+	
+	init(user: UserController) {
+>>>>>>> main
 		self.user = user
 		super.init(nibName: nil, bundle: nil)
 	}
