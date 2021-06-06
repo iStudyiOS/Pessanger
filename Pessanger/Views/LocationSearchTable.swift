@@ -62,37 +62,6 @@ class LocationSearchTable: UITableViewController {
 				weakSelf?.tableView.reloadData()
 			}
 		})
-<<<<<<< HEAD
-  }
-  
-  // MARK: Parsing Address
-  func parseAddress(_ selectedItem:MKPlacemark) -> String {
-    // 주소 띄어쓰기 관련 설정
-    // 도시 이름 띄어쓰기
-    let firstSpace = (selectedItem.locality != nil && selectedItem.administrativeArea != nil) ? " " : ""
-    let secondSpace = (selectedItem.subThoroughfare != nil && selectedItem.thoroughfare != nil) ? " " : ""
-    // 번가,도시 사이 컴마 찍기
-    let comma = (selectedItem.subThoroughfare != nil || selectedItem.thoroughfare != nil) && (selectedItem.subAdministrativeArea != nil || selectedItem.administrativeArea != nil) ? ", " : ""
-    
-    let addressLine = String( // 시 구 동, 지번
-      format:"%@%@%@%@%@%@%@",
-      // 시
-      selectedItem.administrativeArea ?? "",
-      firstSpace,
-      // 구
-      selectedItem.locality ?? "",
-      secondSpace,
-      // 동
-      selectedItem.thoroughfare ?? "",
-      comma,
-      // 지번
-      selectedItem.subThoroughfare ?? ""
-    )
-    return addressLine
-  }
-=======
-//    tableView.rowHeight = UITableView.automaticDimension
-//    tableView.estimatedRowHeight = UITableView.automaticDimension
 	}
 	
 	// MARK: Parsing Address
@@ -120,7 +89,6 @@ class LocationSearchTable: UITableViewController {
 		)
 		return addressLine
 	}
->>>>>>> cf2a02586c5264d4ee4c55f3e3ce20e06e0a216e
 	
 	enum Category: CaseIterable {
 		case map
