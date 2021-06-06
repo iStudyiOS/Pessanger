@@ -27,7 +27,7 @@ struct UserInfo: Codable {
 	init(nickname: String, uid: String) {
 		self.nickname = nickname
 		self.uid = uid
-		self.imageUrls = []
+        self.imageUrls = []
 		self.profileImageUrl = nil
 		self.lastActivated = Date()
 		self.lastLocation = nil

@@ -66,8 +66,6 @@ class LocationSearchTable: UITableViewController {
 				weakSelf?.tableView.reloadData()
 			}
 		})
-//    tableView.rowHeight = UITableView.automaticDimension
-//    tableView.estimatedRowHeight = UITableView.automaticDimension
   }
   
   // MARK: Parsing Address
