@@ -10,12 +10,14 @@
 import UIKit
 import MapKit
 import Combine
-
+// 여기는 검색 searchBar를 눌렀을 때 나오는 tableView에 관한 코드가 작성되어있습니다..! 다음주에,..코드리뷰...해드릴게요...죄송....
 class LocationSearchTable: UITableViewController {
   
   var handleMapSearchDelegate: HandleMapSearch? = nil
   var matchingItems: [MKMapItem] = []
   var mapView: MKMapView? = nil
+  
+  var currentlocation: CLLocation!
   
   // Search User
   var user: UserController!
@@ -189,7 +191,9 @@ extension LocationSearchTable {
 
 // MARK: HandleMapSearchDelegate
 extension LocationSearchTable {
-  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+  override func tableView(
+    _ tableView: UITableView,
+    didSelectRowAt indexPath: IndexPath) {
     
     switch searchCategory {
     case .map:

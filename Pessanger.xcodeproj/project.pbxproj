@@ -16,6 +16,8 @@
 		1CB0A0D4264926A70062C22D /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED5264923470062C22D /* libxml2.tbd */; };
 		1CB0A0D5264926AF0062C22D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED4264923400062C22D /* libc++.tbd */; };
 		1CB0A0D6264927B10062C22D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB09ED0264923320062C22D /* CoreLocation.framework */; };
+		1CBAEFBA2664E3490029760B /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBAEFB92664E3490029760B /* Annotation.swift */; };
+		1CBAEFBC2664E3510029760B /* AnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBAEFBB2664E3510029760B /* AnnotationView.swift */; };
 		1CDBE4B526490B97009A923B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B426490B97009A923B /* AppDelegate.swift */; };
 		1CDBE4B726490B97009A923B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDBE4B626490B97009A923B /* SceneDelegate.swift */; };
 		1CDBE4BC26490B97009A923B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CDBE4BA26490B97009A923B /* Main.storyboard */; };
@@ -70,6 +72,8 @@
 		1CB09ED5264923470062C22D /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		1CB09ED62649234D0062C22D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		1CB0A0D1264926900062C22D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		1CBAEFB92664E3490029760B /* Annotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
+		1CBAEFBB2664E3510029760B /* AnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnnotationView.swift; sourceTree = "<group>"; };
 		1CDBE4B126490B97009A923B /* Pessanger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pessanger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDBE4B426490B97009A923B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CDBE4B626490B97009A923B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -137,18 +141,16 @@
 		1CB09E1B2649147F0062C22D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				1CBAEFB42664D5340029760B /* Map */,
 				8910E4EB2663B6A6008CFAAE /* Auth */,
 				1CDBE4CA26490BD6009A923B /* ChatViewController.swift */,
 				1CDBE4CC26490BE4009A923B /* MessageViewController.swift */,
-				1CDBE4C826490BCD009A923B /* HomeViewController.swift */,
 				9854B41A264FC33400CEB785 /* SettingsViewController.swift */,
 				9854B41F2651008500CEB785 /* ProfileViewController.swift */,
 				D4E17309265A6064003ECC18 /* PaddingLabel.swift */,
 				D4E1730B265A607E003ECC18 /* SentMessageCell.swift */,
 				D4E1730D265A6093003ECC18 /* ReceivedMessageCell.swift */,
 				D49DE7B226635E9500EB8B71 /* MessageListCell.swift */,
-				1C266BB2265F617500EEA2EA /* LocationSearchTable.swift */,
-				1C266BB4265F6D3100EEA2EA /* ResultTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -175,6 +177,18 @@
 				1CB09ECE2649232A0062C22D /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1CBAEFB42664D5340029760B /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				1CDBE4C826490BCD009A923B /* HomeViewController.swift */,
+				1CBAEFBB2664E3510029760B /* AnnotationView.swift */,
+				1CBAEFB92664E3490029760B /* Annotation.swift */,
+				1C266BB2265F617500EEA2EA /* LocationSearchTable.swift */,
+				1C266BB4265F6D3100EEA2EA /* ResultTableViewCell.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 		1CDBE4A826490B97009A923B = {
@@ -370,6 +384,7 @@
 				8910E4D72663B66A008CFAAE /* Future&Promise.swift in Sources */,
 				D49DE7B326635E9500EB8B71 /* MessageListCell.swift in Sources */,
 				8910E4E82663B68D008CFAAE /* UserController.swift in Sources */,
+				1CBAEFBC2664E3510029760B /* AnnotationView.swift in Sources */,
 				1CFAFF6C2650D72F00F8D1D5 /* UINavigationController+LeftPushPop.swift in Sources */,
 				8910E4EE2663B6A6008CFAAE /* SignUpViewController.swift in Sources */,
 				8910E4EF2663B6A6008CFAAE /* SignInViewConroller.swift in Sources */,
@@ -400,6 +415,7 @@
 				D4E17304265A5A44003ECC18 /* ChatViewModel.swift in Sources */,
 				8910E4D32663B66A008CFAAE /* UrlExtension.swift in Sources */,
 				8910E4D12663B66A008CFAAE /* Error.swift in Sources */,
+				1CBAEFBA2664E3490029760B /* Annotation.swift in Sources */,
 				9854B4202651008500CEB785 /* ProfileViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

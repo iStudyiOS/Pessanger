@@ -10,8 +10,15 @@ import SnapKit
 import MapKit
 import CoreLocation
 
+// TODO: 사용자 heading 표시하기...
+// TODO: 경로 표시하기.
+
 protocol HandleMapSearch {
   func dropPinZoomIn(placemark: MKPlacemark)
+}
+
+protocol HeadingDelegate : AnyObject {
+    func headingChanged(_ heading: CLLocationDirection)
 }
 
 final class HomeViewController: UIViewController, UISearchControllerDelegate {
@@ -21,10 +28,17 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
   var profileButton = UIButton()
   
   var mapView = MKMapView()
-  var locationManager = CLLocationManager()
-  var currentLocation: CLLocation!
+//  var locationManager = CLLocationManager()
+  lazy var locationManager: CLLocationManager = {
+      let manager = CLLocationManager()
+      return manager
+  }()
+  var currentLocation: CLLocation! // 현재 위치 주소
   var resultSearchController = UISearchController()
+  var destination = CLLocationCoordinate2D() // 경로 탐색시 도착지 주소
   
+  var userHeading: CLLocationDirection?
+  var headingImageView: UIImageView?
   var selectedPin: MKPlacemark? = nil
   
   private let user: UserController
@@ -96,6 +110,7 @@ final class HomeViewController: UIViewController, UISearchControllerDelegate {
     locationManager.delegate = self
     locationManager.desiredAccuracy = kCLLocationAccuracyBest // bettery
     locationManager.startUpdatingLocation()
+    locationManager.stopUpdatingHeading()
   }
   
   func setLocationSearchTable() {
@@ -258,30 +273,109 @@ extension HomeViewController: CLLocationManagerDelegate {
     didFailWithError error: Error) {
     print(error.localizedDescription)
   }
+  
+  func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    if newHeading.headingAccuracy < 0 { return }
+    
+    let heading = newHeading.trueHeading > 0 ? newHeading.trueHeading : newHeading.magneticHeading
+    userHeading = heading
+  }
+  
+  // 경로 표시
+  func showRouteOnMap(pickupCoordinate: CLLocationCoordinate2D, destinationCoordinate: CLLocationCoordinate2D) {
+    
+    let sourcePlacemark = MKPlacemark(coordinate: pickupCoordinate, addressDictionary: nil)
+    let destinationPlacemark = MKPlacemark(coordinate: destinationCoordinate, addressDictionary: nil)
+    
+    let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
+    let destinationMapItem = MKMapItem(placemark: destinationPlacemark)
+    
+    let sourceAnnotation = MKPointAnnotation()
+    
+    if let location = sourcePlacemark.location {
+      sourceAnnotation.coordinate = location.coordinate
+    }
+    
+    let destinationAnnotation = MKPointAnnotation()
+    
+    if let location = destinationPlacemark.location {
+      destinationAnnotation.coordinate = location.coordinate
+    }
+    
+    self.mapView.showAnnotations([sourceAnnotation,destinationAnnotation], animated: true )
+    
+    let directionRequest = MKDirections.Request()
+    directionRequest.source = sourceMapItem
+    directionRequest.destination = destinationMapItem
+    directionRequest.transportType = .automobile
+    
+    // 경로 계산
+    let directions = MKDirections(request: directionRequest)
+    
+    directions.calculate {
+      (response, error) -> Void in
+      
+      guard let response = response else {
+        if let error = error {
+          print("Error: \(error)")
+        }
+        return
+      }
+      
+      let route = response.routes[0]
+      
+      self.mapView.addOverlay((route.polyline), level: MKOverlayLevel.aboveRoads)
+      
+      let rect = route.polyline.boundingMapRect
+      self.mapView.setRegion(MKCoordinateRegion(rect), animated: true)
+    }
+  }
 }
 
 // MARK: MKMapViewDelegate
 extension HomeViewController: MKMapViewDelegate {
-  func mapView(
-    _ mapView: MKMapView,
-    viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-    if annotation is MKUserLocation {
-      //return nil so map view draws "blue dot" for standard user location
-      return nil
+  func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+    var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: NSStringFromClass(Annotation.self))
+    if (annotationView == nil) {
+      annotationView = AnnotationView(annotation: annotation, reuseIdentifier: NSStringFromClass(Annotation.self))
+    } else {
+      annotationView!.annotation = annotation
     }
-    let reuseId = "pin"
-    var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
     
-    pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-    pinView?.pinTintColor = UIColor.orange
-    pinView?.canShowCallout = true
-    let smallSquare = CGSize(width: 30, height: 30)
-    
-    let button = UIButton(frame: CGRect(origin: .zero, size: smallSquare))
-    button.setBackgroundImage(UIImage(systemName: "car.fill"), for: .normal)
-    button.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
-    pinView?.leftCalloutAccessoryView = button
-    return pinView
+    if let annotation = annotation as? Annotation {
+      annotation.headingDelegate = annotationView as? HeadingDelegate
+      annotationView!.image = UIImage(named: "black_arrow_up")
+    }
+    return annotationView
+  }
+  
+  // heading
+  func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+    if views.last?.annotation is MKUserLocation {
+      addHeadingView(toAnnotationView: views.last!)
+    }
+  }
+  
+  func addHeadingView(toAnnotationView annotationView: MKAnnotationView) {
+    if headingImageView == nil {
+      let image = UIImage(named: "black_arrow")
+      headingImageView = UIImageView(image: image)
+      headingImageView!.frame = CGRect(x: (annotationView.frame.size.width - image!.size.width)/2,
+                                       y: (annotationView.frame.size.height - image!.size.height)/2,
+                                       width: image!.size.width, height: image!.size.height)
+      annotationView.insertSubview(headingImageView!, at: 0)
+      headingImageView!.isHidden = true
+    }
+  }
+  
+  func updateHeadingRotation() {
+    if let heading = userHeading,
+    let headingImageView = headingImageView {
+      
+      headingImageView.isHidden = false
+      let rotation = CGFloat(heading/180 * Double.pi)
+      headingImageView.transform = CGAffineTransform(rotationAngle: rotation)
+    }
   }
 }
 
